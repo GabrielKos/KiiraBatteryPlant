@@ -140,6 +140,11 @@
                     </div>
                 </div>
 
+                <!-- Live Deploy Sync Button (Visible only when authorized) -->
+                <button id="btn-save-github" onclick="downloadUpdatedFile()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-lg text-xs flex items-center gap-2 transition-all shadow-md hover:scale-[1.02]">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Save & Deploy to GitHub
+                </button>
+
                 <div class="bg-[#FAF8F2] border border-[#E3DDCF] rounded-lg px-4 py-2 flex items-center gap-3">
                     <div class="w-3 h-3 rounded-full bg-amber-600 animate-pulse"></div>
                     <div>
@@ -502,6 +507,21 @@
         };
 
         window.onload = function() {
+            const cachedDB = localStorage.getItem("KMC_GANTT_PERSISTED_DB");
+            if (cachedDB) {
+                try {
+                    const parsed = JSON.parse(cachedDB);
+                    taskDatabase.forEach(task => {
+                        const saved = parsed.find(p => p.ref === task.ref);
+                        if (saved) {
+                            task.completed = saved.completed;
+                        }
+                    });
+                } catch(e) {
+                    console.error("Local Storage sync failed to parse: ", e);
+                }
+            }
+
             renderHeaderDays();
             renderGanttChart();
             updateGlobalStats();
@@ -606,6 +626,7 @@
             const label = document.getElementById("auth-label");
             const ping = document.getElementById("auth-ping");
             const dot = document.getElementById("auth-dot");
+            const saveBtn = document.getElementById("btn-save-github");
 
             if (isAuthorized) {
                 badge.className = "cursor-pointer bg-emerald-50 hover:bg-emerald-100 border border-emerald-500 rounded-lg px-4 py-2 flex items-center gap-3 transition-all group shadow-sm";
@@ -613,12 +634,14 @@
                 label.innerHTML = `<i class="fa-solid fa-lock-open text-[10px]"></i> Editor: ${activeEditorName}`;
                 ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
                 dot.className = "relative inline-flex rounded-full h-3 w-3 bg-emerald-500";
+                saveBtn.classList.remove("hidden");
             } else {
                 badge.className = "cursor-pointer bg-[#FAF8F2] hover:bg-[#F0EDE4] border border-amber-500/40 hover:border-amber-500 rounded-lg px-4 py-2 flex items-center gap-3 transition-all group";
                 label.className = "text-xs font-bold text-amber-700 flex items-center gap-1";
                 label.innerHTML = `<i class="fa-solid fa-lock text-[10px]"></i> View-Only Mode`;
                 ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75";
                 dot.className = "relative inline-flex rounded-full h-3 w-3 bg-amber-500";
+                saveBtn.classList.add("hidden");
             }
         }
 
@@ -660,6 +683,10 @@
             const task = taskDatabase.find(t => t.ref === taskRef);
             if (task) {
                 task.completed = !task.completed;
+                
+                // Save locally so page refreshes preserve state
+                localStorage.setItem("KMC_GANTT_PERSISTED_DB", JSON.stringify(taskDatabase));
+                
                 updateGlobalStats();
                 renderGanttChart();
                 
@@ -677,6 +704,58 @@
                 if (!modal.classList.contains("hidden")) {
                     populateModalLists();
                 }
+            }
+        }
+
+        // Dynamic Compilation & Deployment file generator
+        async function downloadUpdatedFile() {
+            try {
+                // Fetch current webpage source
+                const response = await fetch(window.location.href);
+                if (!response.ok) throw new Error("Could not retrieve file source.");
+                const rawSource = await response.text();
+
+                const dbKeyword = "const taskDatabase = [";
+                const dbStartIndex = rawSource.indexOf(dbKeyword);
+                
+                if (dbStartIndex === -1) {
+                    showCustomToast("Export Error", "Failed to compile. Source task database marker missing.");
+                    return;
+                }
+
+                // Locate the matching end array bracket "];"
+                const searchZone = rawSource.substring(dbStartIndex);
+                const dbRelativeEnd = searchZone.indexOf("];");
+                
+                if (dbRelativeEnd === -1) {
+                    showCustomToast("Export Error", "Failed to compile. Array closing token missing.");
+                    return;
+                }
+
+                const dbEndIndex = dbStartIndex + dbRelativeEnd + 2;
+
+                // Stringify with clean readable database tab margins
+                const updatedArrayString = "const taskDatabase = " + JSON.stringify(taskDatabase, null, 12) + ";";
+                
+                // Splice source code
+                const compiledSource = rawSource.substring(0, dbStartIndex) + updatedArrayString + rawSource.substring(dbEndIndex);
+
+                // Download File Blob
+                const blob = new Blob([compiledSource], { type: "text/html" });
+                const downloadLink = document.createElement("a");
+                downloadLink.href = URL.createObjectURL(blob);
+                downloadLink.download = "index.html"; // Default output deployment name
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+
+                showCustomToast(
+                    "Deploy File Downloaded!", 
+                    "Progress changes compiled. Simply drag and drop this 'index.html' file to your GitHub repository to update the team live page!"
+                );
+            } catch (err) {
+                console.error("Compilation failed: ", err);
+                showCustomToast("Source Compilation Failed", "Ensure you are testing this in a stable network sandbox.");
             }
         }
 
