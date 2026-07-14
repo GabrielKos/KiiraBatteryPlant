@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC Luwero T-6 Battery Plant - Electrifying Gantt Chart</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js for Client-Side Landscape PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        // Global scope declaration to handle image load errors gracefully
+        let fallbackTriggered = false;
+        function handleLogoFallback() {
+            if (fallbackTriggered) return; // Prevent infinite loops if fallback fails
+            fallbackTriggered = true;
+            
+            const mainImg = document.getElementById("kmc-main-logo");
+            if (mainImg) {
+                // Tier 2 Fallback: Attempt local directory loading
+                mainImg.src = "KIIRA MOTORS CORPORATION LOGO Single.png";
+                
+                // If local path also fails, trigger Tier 3: Vector Render
+                mainImg.onerror = function() {
+                    const container = document.getElementById("kmc-logo-container");
+                    if (container) {
+                        container.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 150" class="h-9 w-auto">
+                                <g fill="#E11D48" font-family="'Inter', sans-serif" font-weight="900" font-style="italic">
+                                    <text x="10" y="110" font-size="120" letter-spacing="-5">KMC</text>
+                                </g>
+                                <path d="M110,65 Q270,25 470,35 Q270,55 110,65 Z" fill="#E11D48" opacity="0.9"/>
+                                <path d="M10,75 Q240,85 480,55 Q240,105 10,75 Z" fill="#E11D48" opacity="0.8"/>
+                            </svg>
+                        `;
+                    }
+                };
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Custom warm scrollbar styling matching light cream theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #EFECE1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4CDBC;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #BAAF99;
+        }
+        /* Glowing premium shadow effects tuned for warm light background */
+        .glow-morgan {
+            box-shadow: 0 4px 14px rgba(225, 29, 72, 0.25);
+        }
+        .glow-shibah {
+            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25);
+        }
+        .glow-owen {
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+        }
+        .glow-joint {
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+        }
+        /* Pulse animations for Live Date indicator and warning zones */
+        @keyframes pulse-line {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; box-shadow: 0 0 8px #d97706, 0 0 15px #d97706; }
+        }
+        .pulse-today {
+            animation: pulse-line 2s infinite ease-in-out;
+        }
+        @keyframes pulse-red {
+            0%, 100% { border-color: rgba(220, 38, 38, 0.2); }
+            50% { border-color: rgba(220, 38, 38, 0.8); box-shadow: 0 0 6px rgba(220, 38, 38, 0.3); }
+        }
+        .pulse-overdue {
+            animation: pulse-red 2.5s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-[#F5F2EB] text-[#2A2421] min-h-screen flex flex-col antialiased selection:bg-rose-500 selection:text-white">
+
+    <!-- Top Dashboard Header -->
+    <header class="border-b border-[#E3DDCF] bg-[#FAF8F2] sticky top-0 z-40 px-6 py-4 shadow-sm">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <!-- Brand & Mission Statement -->
+            <div class="flex items-center gap-4">
+                <div id="kmc-logo-container" class="p-1 bg-white rounded-xl border border-[#E3DDCF] flex items-center justify-center h-12 w-32 overflow-hidden">
+                    <!-- Tier 1: Pull directly from the Google Drive direct image stream link -->
+                    <img src="https://lh3.googleusercontent.com/d/14LT4qnflbiBeF7xaG9HusblSDW7EYA1_" 
+                         id="kmc-main-logo"
+                         onerror="handleLogoFallback()" 
+                         alt="Kiira Motors Corporation Logo" 
+                         class="h-10 w-auto object-contain">
+                </div>
+                <div class="h-8 w-[1px] bg-[#E3DDCF] hidden md:block"></div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] tracking-widest font-extrabold text-rose-600 uppercase">T-6 Luwero Park</span>
+                        <span class="px-2 py-0.5 bg-[#EFECE1] text-[10px] rounded text-rose-700 border border-rose-200 font-bold uppercase">Active Model V8.3</span>
+                    </div>
+                    <h1 class="text-base font-extrabold tracking-tight text-[#2A2421]">Battery Pack Plant Master Workplan</h1>
+                </div>
+            </div>
+
+            <!-- Global KPI Live Panel & Access Control -->
+            <div class="flex flex-wrap gap-3 items-center">
+                <!-- Lock/Auth Status Indicator Badge -->
+                <div id="auth-badge-trigger" onclick="openAuthModal()" class="cursor-pointer bg-[#FAF8F2] hover:bg-[#F0EDE4] border border-amber-500/40 hover:border-amber-500 rounded-lg px-4 py-2 flex items-center gap-3 transition-all group">
+                    <span class="flex h-3 w-3 relative">
+                        <span id="auth-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span id="auth-dot" class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                    </span>
+                    <div>
+                        <div class="text-[9px] uppercase tracking-wider text-[#6E645A]">Project Access</div>
+                        <div id="auth-label" class="text-xs font-bold text-amber-700 flex items-center gap-1">
+                            <i class="fa-solid fa-lock text-[10px]"></i> View-Only Mode
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[#FAF8F2] border border-[#E3DDCF] rounded-lg px-4 py-2 flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-amber-600 animate-pulse"></div>
+                    <div>
+                        <div class="text-[9px] uppercase tracking-wider text-[#6E645A] font-semibold">Timeline Date</div>
+                        <div class="text-xs font-bold text-[#2A2421] mono">July 9, 2026</div>
+                    </div>
+                </div>
+
+                <div onclick="openCompletionModal()" class="bg-[#FAF8F2] hover:bg-[#F0EDE4] cursor-pointer border border-[#E3DDCF] hover:border-rose-500 transition-all rounded-lg px-4 py-2 flex items-center gap-3 group">
+                    <i class="fa-solid fa-list-check text-rose-600 group-hover:scale-110 transition-transform text-lg"></i>
+                    <div>
+                        <div class="text-[9px] uppercase tracking-wider text-[#6E645A] group-hover:text-rose-700 transition-colors flex items-center gap-1">
+                            Task Completion <i class="fa-solid fa-arrow-up-right-from-square text-[8px]"></i>
+                        </div>
+                        <div class="text-xs font-bold text-rose-600 mono" id="stat-completion">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Interactive Filter & Dashboard Control Panel (High-Legibility Blue/Slate Theme) -->
+    <main class="flex-grow p-4 md:p-6 max-w-7xl mx-auto w-full flex flex-col gap-6">
+        <section class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg text-white">
+            <div class="flex flex-col gap-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <h2 class="text-base font-bold flex items-center gap-2 text-white">
+                            <i class="fa-solid fa-sliders text-rose-500"></i> Interactive Filtering Hub
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1">Isolate tasks dynamically by responsible officers, technical team members, or timeline chapters.</p>
+                    </div>
+                    <!-- View Mode Controls & PDF Export -->
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex bg-slate-800 p-1 rounded-lg border border-slate-700">
+                            <button onclick="toggleGroupMode('chapter')" id="btn-group-chapter" class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 bg-rose-600 text-white shadow-sm">
+                                <i class="fa-solid fa-folder-open mr-1"></i> Chapter View
+                            </button>
+                            <button onclick="toggleGroupMode('lead')" id="btn-group-lead" class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 text-slate-400 hover:text-white">
+                                <i class="fa-solid fa-user-tie mr-1"></i> Lead Officer View
+                            </button>
+                        </div>
+                        <!-- High-Voltage PDF Export Button -->
+                        <button onclick="exportGanttPDF()" id="btn-pdf-export" class="px-4 py-2 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white font-bold rounded-lg text-xs flex items-center gap-2 transition-all shadow-md hover:scale-[1.02]">
+                            <i class="fa-solid fa-file-pdf"></i> Export Landscape PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- Lead Officer Filter -->
+                    <div>
+                        <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-2">Filter by Lead Officer</label>
+                        <select onchange="applyFilters()" id="filter-lead" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-xs text-white font-medium focus:outline-none focus:ring-2 focus:ring-rose-500">
+                            <option value="all">-- All Leads --</option>
+                            <option value="Morgan">Morgan Mulondo Kibuuka</option>
+                            <option value="Shibah">Shibah (Technical Lead)</option>
+                            <option value="Owen">Owen Tusiime (Sustainability)</option>
+                            <option value="Morgan/Shibah">Morgan & Shibah (Joint)</option>
+                        </select>
+                    </div>
+
+                    <!-- Support Member Filter -->
+                    <div>
+                        <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-2">Filter by Support Member</label>
+                        <select onchange="applyFilters()" id="filter-member" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-xs text-white font-medium focus:outline-none focus:ring-2 focus:ring-rose-500">
+                            <option value="all">-- All Members --</option>
+                            <option value="Gabriel">Gabriel Herniel Kitutu</option>
+                            <option value="Elizabeth">Elizabeth Akoth</option>
+                            <option value="Druscilar">Druscilar Atuhaire</option>
+                            <option value="Karen">Karen Dorcas</option>
+                            <option value="Renorah">Renorah Grace Namata</option>
+                        </select>
+                    </div>
+
+                    <!-- Status Filter -->
+                    <div>
+                        <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-2">Task Urgency & Threshold</label>
+                        <div class="flex items-center gap-2 h-[42px]">
+                            <button onclick="toggleHighValueOnly()" id="btn-highvalue" class="w-full bg-slate-800 hover:bg-slate-750 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> High Priority Deliverables
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Gantt Table Container (Cream & Linen Theme) -->
+        <section class="bg-white border border-[#E3DDCF] rounded-xl overflow-hidden shadow-sm flex flex-col">
+            
+            <!-- Timeline Metadata Info -->
+            <div class="px-6 py-4 bg-[#FAF8F2] border-b border-[#E3DDCF] flex flex-wrap justify-between items-center gap-4">
+                <div class="flex items-center gap-4 text-xs text-[#6E645A] font-medium">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-600 shadow-sm"></span> Morgan</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-violet-600 shadow-sm"></span> Shibah</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-600 shadow-sm"></span> Owen</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500 shadow-sm"></span> Joint Team</span>
+                </div>
+                <div class="text-xs text-[#6E645A] flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-rose-500"></i>
+                    <span>Ticking checkboxes marks tasks complete. Red flashing rows highlight overdue uncompleted items.</span>
+                </div>
+            </div>
+
+            <!-- Horizontally Scrollable Gantt Wrapper -->
+            <div class="overflow-x-auto w-full relative" id="gantt-scroll-container">
+                <div class="min-w-[1200px]" id="gantt-render-root">
+                    
+                    <!-- Gantt Header Structure (Sticky row) -->
+                    <div class="grid grid-cols-[320px_1fr] bg-[#FAF8F2] sticky top-0 z-30 border-b border-[#E3DDCF] text-[10px] tracking-wider uppercase font-bold text-[#6E645A]">
+                        <!-- Left Static Pane -->
+                        <div class="p-4 border-r border-[#E3DDCF] sticky left-0 bg-[#FAF8F2] z-20 flex items-center">
+                            Work Package / Reference
+                        </div>
+                        <!-- Right Chronological Days Panel -->
+                        <div class="grid grid-cols-24 text-center select-none" id="timeline-header-days">
+                            <!-- Injected dynamically via Javascript -->
+                        </div>
+                    </div>
+
+                    <!-- Gantt Body Rows -->
+                    <div class="divide-y divide-[#E3DDCF]" id="gantt-rows-container">
+                        <!-- Injected dynamically via Javascript -->
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Detailed Tooltip Drawer Card -->
+        <section id="detail-drawer" class="hidden bg-[#FAF8F2] border border-[#E3DDCF] rounded-xl p-6 shadow-md transition-all duration-300">
+            <div class="flex justify-between items-start border-b border-[#E3DDCF] pb-4 mb-4">
+                <div class="flex items-center gap-3">
+                    <span class="px-2.5 py-1 bg-[#EFECE1] border border-[#E3DDCF] text-xs rounded-full text-rose-700 font-bold mono" id="drawer-ref">Ref 1.1</span>
+                    <h3 class="text-base font-extrabold text-[#2A2421]" id="drawer-name">Project Vision & Objectives</h3>
+                </div>
+                <button onclick="closeDrawer()" class="text-[#6E645A] hover:text-[#2A2421] transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+                <div>
+                    <div class="text-[9px] text-[#6E645A] uppercase tracking-wider mb-1 font-bold">Lead Officer</div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-[#EFECE1] border border-[#E3DDCF] flex items-center justify-center text-xs font-bold text-rose-700" id="drawer-avatar-lead">M</div>
+                        <span class="text-xs font-bold text-[#2A2421]" id="drawer-lead">Morgan</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-[9px] text-[#6E645A] uppercase tracking-wider mb-1 font-bold">Support Member</div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-[#EFECE1] border border-[#E3DDCF] flex items-center justify-center text-xs font-bold text-violet-700" id="drawer-avatar-member">G</div>
+                        <span class="text-xs font-bold text-[#2A2421]" id="drawer-member">Gabriel</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-[9px] text-[#6E645A] uppercase tracking-wider mb-1 font-bold">Time Schedule</div>
+                    <div class="text-xs font-bold text-[#2A2421] flex items-center gap-2">
+                        <i class="fa-regular fa-calendar-days text-amber-600"></i>
+                        <span id="drawer-dates">July 8 - July 10, 2026</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-[9px] text-[#6E645A] uppercase tracking-wider mb-1 font-bold">Operational State</div>
+                    <div class="flex items-center gap-2" id="drawer-status-badge">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+                <div>
+                    <div class="text-[9px] text-[#6E645A] uppercase tracking-wider mb-1 font-bold flex items-center gap-1">
+                        Interactive Control <i class="fa-solid fa-user-lock text-[9px] text-amber-600" title="Authentication Protected"></i>
+                    </div>
+                    <button id="drawer-toggle-btn" onclick="" class="mt-1 px-4 py-1.5 w-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-circle-check"></i> Toggle Completed
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Master Progress Summary Modal -->
+    <div id="completion-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#FAF8F2] border border-[#E3DDCF] rounded-xl w-full max-w-4xl max-h-[85vh] overflow-hidden flex flex-col shadow-xl">
+            <div class="p-6 border-b border-[#E3DDCF] flex justify-between items-center">
+                <div>
+                    <h3 class="text-base font-extrabold text-[#2A2421] flex items-center gap-2">
+                        <i class="fa-solid fa-diagram-project text-rose-600"></i> Workplan Deliverables Directory
+                    </h3>
+                    <p class="text-xs text-[#6E645A] mt-1">Directly tracking completed against pending phases of the Luwero T-6 Battery Case Study.</p>
+                </div>
+                <button onclick="closeCompletionModal()" class="text-[#6E645A] hover:text-[#2A2421] transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#F5F2EB]">
+                <!-- Completed Pipeline -->
+                <div class="flex flex-col gap-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-2 border-b border-emerald-200 pb-2">
+                        <i class="fa-solid fa-circle-check"></i> Finalized Tasks (<span id="modal-completed-count">0</span>)
+                    </h4>
+                    <div id="modal-completed-list" class="flex flex-col gap-2 max-h-[40vh] overflow-y-auto pr-2">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+
+                <!-- Pending Pipeline -->
+                <div class="flex flex-col gap-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-2 border-b border-amber-200 pb-2">
+                        <i class="fa-solid fa-clock-rotate-left animate-pulse"></i> Incomplete Tasks (<span id="modal-pending-count">0</span>)
+                    </h4>
+                    <div id="modal-pending-list" class="flex flex-col gap-2 max-h-[40vh] overflow-y-auto pr-2">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 bg-[#FAF8F2] border-t border-[#E3DDCF] text-center text-xs text-[#6E645A] font-semibold">
+                Click any task within the lists to jump straight to its positioning inside the main timeline.
+            </div>
+        </div>
+    </div>
+
+    <!-- Authorization / Access Control Selection Modal -->
+    <div id="auth-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#FAF8F2] border border-[#E3DDCF] rounded-xl w-full max-w-md overflow-hidden flex flex-col shadow-xl">
+            <div class="p-6 border-b border-[#E3DDCF]">
+                <h3 class="text-base font-extrabold text-[#2A2421] flex items-center gap-2">
+                    <i class="fa-solid fa-key text-amber-600"></i> Editor Access Authorization
+                </h3>
+                <p class="text-xs text-[#6E645A] mt-1">Select your profile and authenticate to toggle active task statuses.</p>
+            </div>
+            <div class="p-6 flex flex-col gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-[#6E645A] mb-1.5">Authorized Officer Profile</label>
+                    <select id="auth-user-profile" class="w-full bg-[#FAF8F2] border border-[#E3DDCF] rounded-lg p-2.5 text-xs text-[#2A2421] font-bold focus:outline-none focus:ring-2 focus:ring-rose-500">
+                        <option value="Gabriel">Gabriel Herniel Kitutu (Engineer)</option>
+                        <option value="Morgan">Morgan Mulondo Kibuuka (Financials Lead)</option>
+                        <option value="Shibah">Shibah (Technical Lead)</option>
+                        <option value="Owen">Owen Tusiime (Sustainability Lead)</option>
+                        <option value="Paul">Paul Isaac Musasizi (CEO)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-[#6E645A] mb-1.5">Industrial Team Passcode</label>
+                    <input type="password" id="auth-passcode" placeholder="••••••••" class="w-full bg-white border border-[#E3DDCF] rounded-lg p-2.5 text-xs text-[#2A2421] placeholder-[#BAAF99] font-bold focus:outline-none focus:ring-2 focus:ring-rose-500">
+                    <p class="text-[10px] text-[#6E645A] mt-1">Hint: Team consensus password (shared with team leads).</p>
+                </div>
+                <div id="auth-error" class="hidden text-xs text-red-700 font-bold p-2.5 bg-red-50 border border-red-200 rounded">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> Authentication failed. Invalid passcode.
+                </div>
+                <div class="flex gap-3 mt-2">
+                    <button onclick="closeAuthModal()" class="w-1/2 px-4 py-2 bg-[#EFECE1] hover:bg-[#E3DDCF] text-[#2A2421] rounded-lg text-xs font-bold transition-all">
+                        Cancel
+                    </button>
+                    <button onclick="attemptAuthentication()" class="w-1/2 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm">
+                        Authenticate
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unauthorized Activity Notification Toast Alert -->
+    <div id="toast-warning" class="hidden fixed bottom-6 right-6 z-50 bg-[#FAF8F2] border-l-4 border-amber-500 p-4 rounded-r-lg shadow-lg max-w-sm transition-all duration-300 transform translate-y-10 border border-[#E3DDCF]">
+        <div class="flex gap-3">
+            <div class="text-amber-600 text-lg">
+                <i class="fa-solid fa-user-lock animate-bounce"></i>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold text-[#2A2421] uppercase tracking-wider">Access Blocked (View-Only Mode)</h4>
+                <p class="text-xs text-[#6E645A] mt-1">Only Gabriel Herniel Kitutu or authorized Team Leaders can modify task status parameters.</p>
+                <button onclick="openAuthModal()" class="mt-2 text-[10px] font-bold text-rose-600 hover:text-rose-700 transition-all uppercase tracking-wide flex items-center gap-1">
+                    Unlock Workspace <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+            <button onclick="dismissToast()" class="text-[#6E645A] hover:text-[#2A2421]">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tech Footer -->
+    <footer class="mt-auto border-t border-[#E3DDCF] bg-[#FAF8F2] px-6 py-6 text-xs text-[#6E645A]">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <p>© 2026 Kiira Motors Corporation. All strategic rights reserved.</p>
+                <p class="text-[10px] text-[#6E645A] mt-1">Compiled in compliance with OCEO Decision Directives and NEC T-6 master coordination framework.</p>
+            </div>
+            <div class="flex gap-4 font-bold">
+                <a href="#" class="hover:text-rose-600 transition-colors">T-6 Master Workplan</a>
+                <span class="text-[#E3DDCF]">|</span>
+                <a href="#" class="hover:text-rose-600 transition-colors">HSE Protocols</a>
+                <span class="text-[#E3DDCF]">|</span>
+                <a href="#" class="hover:text-rose-600 transition-colors">BOM Reconciliation</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // System variables and dataset
+        const startDateString = "2026-07-08";
+        const endDateString = "2026-07-31";
+        const simulatedTodayString = "2026-07-09";
+
+        // Access Control State
+        let isAuthorized = false;
+        let activeEditorName = "";
+
+        // Main planning packages - Now containing active operational completed properties
+        const taskDatabase = [
+            { ref: "1.1", name: "Project Vision & Objectives", lead: "Morgan", member: "Gabriel", start: "2026-07-08", end: "2026-07-10", section: "1. Introduction & Thesis", highPriority: true, completed: true },
+            { ref: "2.1", name: "Strategic Alignment", lead: "Morgan", member: "Elizabeth", start: "2026-07-08", end: "2026-07-13", section: "2. Strategic Direction", highPriority: false, completed: false },
+            { ref: "2.2", name: "Problem Statement & Opportunity Baseline", lead: "Shibah", member: "Druscilar", start: "2026-07-08", end: "2026-07-13", section: "2. Strategic Direction", highPriority: false, completed: false },
+            { ref: "3.1", name: "Market Demand & Segmentation", lead: "Morgan", member: "Druscilar & Karen", start: "2026-07-08", end: "2026-07-15", section: "3. Market Analysis", highPriority: true, completed: false },
+            { ref: "4.1", name: "Technology Selection & Chemistry Roadmap", lead: "Shibah", member: "Druscilar", start: "2026-07-08", end: "2026-07-15", section: "4. Engineering & Ops", highPriority: true, completed: false },
+            { ref: "4.2", name: "Plant Design & Production Capacity", lead: "Shibah", member: "Renorah/Gabriel", start: "2026-07-08", end: "2026-07-16", section: "4. Engineering & Ops", highPriority: true, completed: false },
+            { ref: "2.3", name: "Policy & Regulatory Enablers", lead: "Morgan", member: "Elizabeth", start: "2026-07-10", end: "2026-07-15", section: "2. Strategic Direction", highPriority: false, completed: false },
+            { ref: "3.2", name: "Competitive Landscape & Right to Win", lead: "Shibah", member: "Karen", start: "2026-07-10", end: "2026-07-16", section: "3. Market Analysis", highPriority: false, completed: false },
+            { ref: "3.3", name: "Rigorous Options Analysis", lead: "Shibah", member: "Druscilar", start: "2026-07-13", end: "2026-07-17", section: "3. Market Analysis", highPriority: false, completed: false },
+            { ref: "4.3", name: "Digital Architecture", lead: "Shibah", member: "Gabriel", start: "2026-07-13", end: "2026-07-17", section: "4. Engineering & Ops", highPriority: false, completed: false },
+            { ref: "5.1", name: "Upstream Sourcing Strategy", lead: "Shibah", member: "Karen", start: "2026-07-13", end: "2026-07-20", section: "5. Supply Chain Strategy", highPriority: false, completed: false },
+            { ref: "6.1", name: "Capital Expenditure (CAPEX)", lead: "Shibah", member: "Renorah/Gabriel", start: "2026-07-13", end: "2026-07-20", section: "6. Financial Planning", highPriority: true, completed: false },
+            { ref: "6.2", name: "Operating Expenditure (OPEX)", lead: "Shibah", member: "Elizabeth/Gabriel", start: "2026-07-13", end: "2026-07-20", section: "6. Financial Planning", highPriority: true, completed: false },
+            { ref: "7.1", name: "Project Governance Framework", lead: "Morgan", member: "Druscilar", start: "2026-07-13", end: "2026-07-17", section: "7. Implementation Plan", highPriority: false, completed: false },
+            { ref: "8.2", name: "Specialized Battery HSE Protocols", lead: "Owen", member: "Gabriel", start: "2026-07-13", end: "2026-07-20", section: "8. HSE & Safety Protocols", highPriority: true, completed: false },
+            { ref: "5.2", name: "Geopolitical & Sourcing Risk Management", lead: "Shibah", member: "Karen", start: "2026-07-15", end: "2026-07-21", section: "5. Supply Chain Strategy", highPriority: false, completed: false },
+            { ref: "5.3", name: "Offtake & Go-To-Market Strategy", lead: "Morgan", member: "Elizabeth", start: "2026-07-15", end: "2026-07-21", section: "5. Supply Chain Strategy", highPriority: true, completed: false },
+            { ref: "7.2", name: "Implementation Roadmap", lead: "Shibah", member: "Renorah/Gabriel", start: "2026-07-15", end: "2026-07-22", section: "7. Implementation Plan", highPriority: true, completed: false },
+            { ref: "7.3", name: "Workforce Excellence & Skills Development", lead: "Shibah", member: "Gabriel/Karen", start: "2026-07-15", end: "2026-07-20", section: "7. Implementation Plan", highPriority: false, completed: false },
+            { ref: "7.4", name: "Corporate Formations & Architecture", lead: "Morgan/Shibah", member: "Elizabeth", start: "2026-07-15", end: "2026-07-22", section: "7. Implementation Plan", highPriority: false, completed: false },
+            { ref: "8.3", name: "Regulatory & Certifications Compliance", lead: "Owen", member: "Gabriel", start: "2026-07-15", end: "2026-07-22", section: "8. HSE & Safety Protocols", highPriority: true, completed: false },
+            { ref: "9.1", name: "Carbon Footprint & Energy Sourcing", lead: "Owen", member: "Druscilar", start: "2026-07-16", end: "2026-07-22", section: "9. Sustainability & Circularity", highPriority: false, completed: false },
+            { ref: "9.2", name: "Circular Economy & EoL Strategy", lead: "Owen", member: "Renorah", start: "2026-07-16", end: "2026-07-23", section: "9. Sustainability & Circularity", highPriority: false, completed: false },
+            { ref: "6.3", name: "Financial Performance & Valuation", lead: "Morgan", member: "Elizabeth", start: "2026-07-17", end: "2026-07-24", section: "6. Financial Planning", highPriority: true, completed: false },
+            { ref: "9.3", name: "Social & Community Impact", lead: "Owen", member: "Elizabeth", start: "2026-07-17", end: "2026-07-23", section: "9. Sustainability & Circularity", highPriority: false, completed: false },
+            { ref: "1.2", name: "The Investment Thesis", lead: "Morgan", member: "Elizabeth", start: "2026-07-20", end: "2026-07-24", section: "1. Introduction & Thesis", highPriority: true, completed: false },
+            { ref: "6.5", name: "Capital Structure & Funding Strategy", lead: "Morgan", member: "Elizabeth", start: "2026-07-20", end: "2026-07-27", section: "6. Financial Planning", highPriority: true, completed: false },
+            { ref: "8.1", name: "Risk Register Matrix", lead: "Owen", member: "Karen", start: "2026-07-20", end: "2026-07-27", section: "8. HSE & Safety Protocols", highPriority: false, completed: false },
+            { ref: "6.4", name: "Sensitivity & Scenario Analysis", lead: "Morgan", member: "Elizabeth", start: "2026-07-22", end: "2026-07-27", section: "6. Financial Planning", highPriority: false, completed: false },
+            { ref: "1.3", name: "Financial & Impact Highlights", lead: "Morgan", member: "Elizabeth", start: "2026-07-27", end: "2026-07-29", section: "1. Introduction & Thesis", highPriority: true, completed: false },
+            { ref: "P5", name: "Executive Summary", lead: "Morgan", member: "N/A", start: "2026-07-28", end: "2026-07-29", section: "10. Closeout & Deliver", highPriority: true, completed: false },
+            { ref: "C1", name: "Consolidation and quality review", lead: "Morgan", member: "N/A", start: "2026-07-28", end: "2026-07-30", section: "10. Closeout & Deliver", highPriority: false, completed: false },
+            { ref: "C2", name: "Submission to OCEO", lead: "Morgan", member: "N/A", start: "2026-07-31", end: "2026-07-31", section: "10. Closeout & Deliver", highPriority: true, completed: false }
+        ];
+
+        // State control
+        let currentGrouping = "chapter"; // "chapter" or "lead"
+        let activeLeadFilter = "all";
+        let activeMemberFilter = "all";
+        let highValueOnly = false;
+
+        // Convert date index
+        const getDayOffset = (dateStr) => {
+            const date = new Date(dateStr);
+            const start = new Date(startDateString);
+            return Math.round((date - start) / (1000 * 60 * 60 * 24));
+        };
+
+        window.onload = function() {
+            renderHeaderDays();
+            renderGanttChart();
+            updateGlobalStats();
+            centerTimelineOnToday();
+        };
+
+        // Render days header row dynamically
+        function renderHeaderDays() {
+            const container = document.getElementById("timeline-header-days");
+            container.innerHTML = "";
+            
+            const totalDays = getDayOffset(endDateString) + 1;
+            container.style.gridTemplateColumns = `repeat(${totalDays}, minmax(40px, 1fr))`;
+
+            for (let i = 0; i < totalDays; i++) {
+                const currentDay = new Date(new Date(startDateString).getTime() + i * 24 * 60 * 60 * 1000);
+                const dayLabel = currentDay.getDate();
+                const isToday = currentDay.toISOString().split('T')[0] === simulatedTodayString;
+
+                const dayDiv = document.createElement("div");
+                dayDiv.className = `py-3 text-[10px] font-mono border-r border-[#E3DDCF] flex flex-col justify-center items-center ${isToday ? 'bg-amber-500/10 text-amber-800 font-bold' : 'text-[#6E645A]'}`;
+                dayDiv.innerHTML = `
+                    <span class="text-[9px]">Jul</span>
+                    <span class="text-xs font-bold ${isToday ? 'text-amber-800' : 'text-[#2A2421]' }">${dayLabel}</span>
+                `;
+                container.appendChild(dayDiv);
+            }
+        }
+
+        // Toggle view grouping mode
+        function toggleGroupMode(mode) {
+            currentGrouping = mode;
+            document.getElementById("btn-group-chapter").className = mode === "chapter" 
+                ? "px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 bg-rose-600 text-white shadow-sm"
+                : "px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 text-slate-400 hover:text-white";
+            
+            document.getElementById("btn-group-lead").className = mode === "lead" 
+                ? "px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 bg-rose-600 text-white shadow-sm"
+                : "px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 text-slate-400 hover:text-white";
+            
+            renderGanttChart();
+        }
+
+        function applyFilters() {
+            activeLeadFilter = document.getElementById("filter-lead").value;
+            activeMemberFilter = document.getElementById("filter-member").value;
+            renderGanttChart();
+        }
+
+        function toggleHighValueOnly() {
+            highValueOnly = !highValueOnly;
+            const btn = document.getElementById("btn-highvalue");
+            if (highValueOnly) {
+                btn.className = "w-full bg-amber-500/20 border border-amber-500 text-white rounded-lg px-4 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm";
+            } else {
+                btn.className = "w-full bg-slate-800 hover:bg-slate-750 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-2";
+            }
+            renderGanttChart();
+        }
+
+        // Center timeline horizontally to start near active Date (July 9, 2026)
+        function centerTimelineOnToday() {
+            const container = document.getElementById("gantt-scroll-container");
+            const todayOffset = getDayOffset(simulatedTodayString);
+            const totalDays = getDayOffset(endDateString) + 1;
+            const singleDayWidth = (container.scrollWidth - 320) / totalDays;
+            
+            container.scrollLeft = (todayOffset * singleDayWidth) - (container.clientWidth / 3);
+        }
+
+        // Modal & Authorization Access Control Mechanism
+        function openAuthModal() {
+            document.getElementById("auth-modal").classList.remove("hidden");
+            document.getElementById("auth-error").classList.add("hidden");
+            document.getElementById("auth-passcode").value = "";
+        }
+
+        function closeAuthModal() {
+            document.getElementById("auth-modal").classList.add("hidden");
+        }
+
+        function attemptAuthentication() {
+            const chosenUser = document.getElementById("auth-user-profile").value;
+            const enteredPasscode = document.getElementById("auth-passcode").value;
+            const errorBanner = document.getElementById("auth-error");
+
+            // Unified organizational passkey validation
+            if (enteredPasscode === "KMC2026") {
+                isAuthorized = true;
+                activeEditorName = chosenUser;
+                errorBanner.classList.add("hidden");
+                closeAuthModal();
+                updateAuthorizationUIElements();
+                showCustomToast("Security Access Unlocked", `Logged in successfully as Lead ${chosenUser}. Write privileges unlocked.`);
+            } else {
+                errorBanner.classList.remove("hidden");
+            }
+        }
+
+        function updateAuthorizationUIElements() {
+            const badge = document.getElementById("auth-badge-trigger");
+            const label = document.getElementById("auth-label");
+            const ping = document.getElementById("auth-ping");
+            const dot = document.getElementById("auth-dot");
+
+            if (isAuthorized) {
+                badge.className = "cursor-pointer bg-emerald-50 hover:bg-emerald-100 border border-emerald-500 rounded-lg px-4 py-2 flex items-center gap-3 transition-all group shadow-sm";
+                label.className = "text-xs font-bold text-emerald-800 flex items-center gap-1";
+                label.innerHTML = `<i class="fa-solid fa-lock-open text-[10px]"></i> Editor: ${activeEditorName}`;
+                ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
+                dot.className = "relative inline-flex rounded-full h-3 w-3 bg-emerald-500";
+            } else {
+                badge.className = "cursor-pointer bg-[#FAF8F2] hover:bg-[#F0EDE4] border border-amber-500/40 hover:border-amber-500 rounded-lg px-4 py-2 flex items-center gap-3 transition-all group";
+                label.className = "text-xs font-bold text-amber-700 flex items-center gap-1";
+                label.innerHTML = `<i class="fa-solid fa-lock text-[10px]"></i> View-Only Mode`;
+                ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75";
+                dot.className = "relative inline-flex rounded-full h-3 w-3 bg-amber-500";
+            }
+        }
+
+        // Non-intrusive customized toast alerts (Avoids alert/confirm entirely)
+        function showCustomToast(headline, text) {
+            const toast = document.getElementById("toast-warning");
+            toast.querySelector("h4").innerText = headline;
+            toast.querySelector("p").innerText = text;
+            
+            toast.classList.remove("hidden");
+            toast.classList.remove("translate-y-10");
+            toast.classList.add("translate-y-0");
+
+            if (headline !== "Access Blocked (View-Only Mode)") {
+                setTimeout(() => {
+                    dismissToast();
+                }, 6000);
+            }
+        }
+
+        function dismissToast() {
+            const toast = document.getElementById("toast-warning");
+            toast.classList.add("translate-y-10");
+            setTimeout(() => {
+                toast.classList.add("hidden");
+            }, 300);
+        }
+
+        // Toggle task completion from any click element
+        function toggleTaskCompletion(taskRef) {
+            if (!isAuthorized) {
+                showCustomToast(
+                    "Access Blocked (View-Only Mode)", 
+                    "You are currently viewing this sheet as read-only. Only Gabriel Herniel Kitutu or assigned Team Leads can check off finished tasks."
+                );
+                return;
+            }
+
+            const task = taskDatabase.find(t => t.ref === taskRef);
+            if (task) {
+                task.completed = !task.completed;
+                updateGlobalStats();
+                renderGanttChart();
+                
+                // If detailed drawer is active, refresh it
+                const drawer = document.getElementById("detail-drawer");
+                if (!drawer.classList.contains("hidden")) {
+                    const drawerRef = document.getElementById("drawer-ref").innerText.replace("Ref ", "");
+                    if (drawerRef === taskRef) {
+                        showTaskDetails(task);
+                    }
+                }
+                
+                // If modal is active, refresh lists
+                const modal = document.getElementById("completion-modal");
+                if (!modal.classList.contains("hidden")) {
+                    populateModalLists();
+                }
+            }
+        }
+
+        // Render Gantt bars dynamically
+        function renderGanttChart() {
+            const rowsContainer = document.getElementById("gantt-rows-container");
+            rowsContainer.innerHTML = "";
+
+            const totalTimelineDays = getDayOffset(endDateString) + 1;
+
+            // Filter tasks based on active selections
+            const filteredTasks = taskDatabase.filter(task => {
+                if (activeLeadFilter !== "all" && task.lead !== activeLeadFilter) return false;
+                if (activeMemberFilter !== "all" && !task.member.includes(activeMemberFilter)) return false;
+                if (highValueOnly && !task.highPriority) return false;
+                return true;
+            });
+
+            // Group tasks depending on Selected View Mode
+            let groups = {};
+            if (currentGrouping === "chapter") {
+                filteredTasks.forEach(task => {
+                    if (!groups[task.section]) groups[task.section] = [];
+                    groups[task.section].push(task);
+                });
+            } else {
+                filteredTasks.forEach(task => {
+                    const groupKey = `Lead Officer: ${task.lead}`;
+                    if (!groups[groupKey]) groups[groupKey] = [];
+                    groups[groupKey].push(task);
+                });
+            }
+
+            // Construct and inject structural items
+            Object.keys(groups).sort().forEach(groupTitle => {
+                // Section Header Row
+                const headerRow = document.createElement("div");
+                headerRow.className = "bg-[#EFECE1] px-6 py-2 border-y border-[#E3DDCF] text-[10px] uppercase tracking-wider font-extrabold text-[#6E645A] flex items-center justify-between";
+                headerRow.innerHTML = `
+                    <span>${groupTitle}</span>
+                    <span class="text-[9px] text-[#6E645A]">${groups[groupTitle].length} Work Packages</span>
+                `;
+                rowsContainer.appendChild(headerRow);
+
+                // Add Row for each task inside group
+                groups[groupTitle].forEach(task => {
+                    const startOffset = getDayOffset(task.start);
+                    const duration = getDayOffset(task.end) - startOffset + 1;
+
+                    const isOverdue = !task.completed && (new Date(task.end) < new Date(simulatedTodayString));
+                    const isActive = new Date(task.start) <= new Date(simulatedTodayString) && new Date(task.end) >= new Date(simulatedTodayString);
+
+                    const rowDiv = document.createElement("div");
+                    rowDiv.id = `gantt-row-${task.ref}`;
+                    rowDiv.className = `grid grid-cols-[320px_1fr] hover:bg-[#F5F2EB]/50 transition-colors group relative border-b border-[#E3DDCF] ${isOverdue ? 'pulse-overdue bg-red-50/50' : ''}`;
+
+                    // Task detail panel (Left column - Sticky)
+                    const labelDiv = document.createElement("div");
+                    labelDiv.className = "p-4 border-r border-[#E3DDCF] sticky left-0 bg-white z-10 flex flex-col justify-center min-w-[320px]";
+
+                    labelDiv.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" ${task.completed ? 'checked' : ''} 
+                                   onclick="event.stopPropagation(); toggleTaskCompletion('${task.ref}')"
+                                   class="w-4 h-4 rounded text-rose-600 bg-white border-[#E3DDCF] focus:ring-rose-500 focus:ring-2 cursor-pointer transition-all">
+                            <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
+                            <span onclick="showTaskDetailsByRef('${task.ref}')" class="text-xs font-bold cursor-pointer text-[#2A2421] group-hover:text-rose-600 transition-colors truncate max-w-[190px]">${task.name}</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-1.5 ml-6">
+                            <span class="text-[10px] text-[#6E645A] font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-user-circle text-rose-600/80"></i> ${task.lead}
+                                ${task.member !== 'N/A' ? `<span class="text-[#D4CDBC]">→</span> <span class="text-[#6E645A] font-medium">${task.member}</span>` : ''}
+                            </span>
+                            ${task.highPriority ? '<span class="text-[8px] text-amber-800 font-extrabold uppercase tracking-wider bg-amber-100 px-1.5 rounded border border-amber-200">Critical</span>' : ''}
+                        </div>
+                    `;
+                    rowDiv.appendChild(labelDiv);
+
+                    // Bar Timeline Grid Area (Right column)
+                    const timelineGridDiv = document.createElement("div");
+                    timelineGridDiv.className = "grid relative items-center select-none";
+                    timelineGridDiv.style.gridTemplateColumns = `repeat(${totalTimelineDays}, minmax(40px, 1fr))`;
+
+                    // Generate Day Background Grid Cells (dotted guides)
+                    for (let g = 0; g < totalTimelineDays; g++) {
+                        const cell = document.createElement("div");
+                        cell.className = "h-full border-r border-dashed border-[#E3DDCF]/40";
+                        timelineGridDiv.appendChild(cell);
+                    }
+
+                    // Master interactive timeline Gantt Bar
+                    const ganttBar = document.createElement("div");
+                    
+                    // Assign glowing aesthetic depending on Lead Officer and Completion Status
+                    let barColorClasses = "from-rose-500 to-rose-600 glow-morgan text-white";
+                    if (task.lead === "Shibah") barColorClasses = "from-violet-500 to-violet-600 glow-shibah text-white";
+                    if (task.lead === "Owen") barColorClasses = "from-emerald-500 to-emerald-600 glow-owen text-white";
+                    if (task.lead === "Morgan/Shibah") barColorClasses = "from-amber-500 to-amber-600 glow-joint text-white";
+
+                    // Gray out completed tasks elegantly
+                    if (task.completed) {
+                        barColorClasses = "from-[#BAAF99] to-[#C4BCA8] text-white border border-[#DDD5C3]";
+                    }
+
+                    ganttBar.className = `absolute h-7 rounded-lg bg-gradient-to-r ${barColorClasses} flex items-center justify-between px-3 text-[10px] font-bold cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:brightness-105`;
+                    
+                    // Grid mapping logic
+                    ganttBar.style.gridColumn = `${startOffset + 1} / span ${duration}`;
+
+                    // Icon setup based on completion status
+                    let statusIcon = '<i class="fa-solid fa-gears animate-spin text-[9px] text-amber-200"></i>';
+                    if (task.completed) {
+                        statusIcon = '<i class="fa-solid fa-circle-check text-white text-[10px]"></i>';
+                    } else if (isOverdue) {
+                        statusIcon = '<i class="fa-solid fa-triangle-exclamation text-white text-[10px] animate-bounce"></i>';
+                    } else if (!isActive && new Date(task.start) > new Date(simulatedTodayString)) {
+                        statusIcon = '<i class="fa-regular fa-clock text-[#EFECE1] text-[9px]"></i>';
+                    }
+
+                    ganttBar.innerHTML = `
+                        <span class="truncate pr-1">${task.ref} | ${duration} Days</span>
+                        <span class="flex items-center gap-1">${statusIcon}</span>
+                    `;
+
+                    ganttBar.addEventListener("click", () => showTaskDetails(task));
+                    timelineGridDiv.appendChild(ganttBar);
+
+                    // Render "Today" vertical indicator line dynamically (July 9)
+                    const todayOffset = getDayOffset(simulatedTodayString);
+                    const todayLine = document.createElement("div");
+                    todayLine.className = "absolute top-0 bottom-0 w-[2px] bg-amber-600 z-10 pointer-events-none pulse-today opacity-80";
+                    todayLine.style.left = `calc((100% / ${totalTimelineDays}) * ${todayOffset})`;
+                    timelineGridDiv.appendChild(todayLine);
+
+                    rowDiv.appendChild(timelineGridDiv);
+                    rowsContainer.appendChild(rowDiv);
+                });
+            });
+
+            if (filteredTasks.length === 0) {
+                const emptyState = document.createElement("div");
+                emptyState.className = "p-12 text-center text-[#6E645A] text-sm flex flex-col items-center justify-center gap-2";
+                emptyState.innerHTML = `
+                    <i class="fa-solid fa-magnifying-glass text-3xl text-[#BAAF99]"></i>
+                    <span>No active work packages match the designated search filter criteria.</span>
+                `;
+                rowsContainer.appendChild(emptyState);
+            }
+        }
+
+        // Display full task breakdown card
+        function showTaskDetails(task) {
+            const drawer = document.getElementById("detail-drawer");
+            drawer.classList.remove("hidden");
+
+            document.getElementById("drawer-ref").innerText = `Ref ${task.ref}`;
+            document.getElementById("drawer-name").innerText = task.name;
+            document.getElementById("drawer-lead").innerText = task.lead;
+            document.getElementById("drawer-member").innerText = task.member;
+
+            const formatStringDate = (dateStr) => {
+                const options = { month: 'short', day: 'numeric' };
+                return new Date(dateStr).toLocaleDateString('en-US', options);
+            };
+            document.getElementById("drawer-dates").innerText = `${formatStringDate(task.start)} - ${formatStringDate(task.end)}, 2026`;
+
+            const isOverdue = !task.completed && (new Date(task.end) < new Date(simulatedTodayString));
+            const isActive = new Date(task.start) <= new Date(simulatedTodayString) && new Date(task.end) >= new Date(simulatedTodayString);
+            
+            const badge = document.getElementById("drawer-status-badge");
+            badge.innerHTML = "";
+            
+            const div = document.createElement("div");
+            if (task.completed) {
+                div.className = "px-3 py-1 bg-emerald-50 border border-emerald-500 text-emerald-800 text-xs font-bold rounded-full flex items-center gap-1.5";
+                div.innerHTML = `<i class="fa-solid fa-circle-check"></i> Finalized & Validated`;
+            } else if (isOverdue) {
+                div.className = "px-3 py-1 bg-red-50 border border-red-500 text-red-700 text-xs font-bold rounded-full flex items-center gap-1.5 pulse-today";
+                div.innerHTML = `<i class="fa-solid fa-circle-exclamation animate-bounce"></i> Overdue Target Gate`;
+            } else if (isActive) {
+                div.className = "px-3 py-1 bg-rose-50 border border-rose-500 text-rose-700 text-xs font-bold rounded-full flex items-center gap-1.5 pulse-today";
+                div.innerHTML = `<i class="fa-solid fa-bolt animate-bounce"></i> In Active Pipeline`;
+            } else {
+                div.className = "px-3 py-1 bg-[#EFECE1] border border-[#E3DDCF] text-[#6E645A] text-xs font-bold rounded-full flex items-center gap-1.5";
+                div.innerHTML = `<i class="fa-regular fa-clock"></i> Scheduled Phase`;
+            }
+            badge.appendChild(div);
+
+            document.getElementById("drawer-avatar-lead").innerText = task.lead.charAt(0);
+            document.getElementById("drawer-avatar-member").innerText = task.member.charAt(0);
+
+            const toggleBtn = document.getElementById("drawer-toggle-btn");
+            toggleBtn.setAttribute("onclick", `toggleTaskCompletion('${task.ref}')`);
+            if (task.completed) {
+                toggleBtn.className = "mt-1 px-4 py-1.5 w-full bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm";
+                toggleBtn.innerHTML = `<i class="fa-solid fa-rotate-left"></i> Mark Incomplete`;
+            } else {
+                toggleBtn.className = "mt-1 px-4 py-1.5 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm";
+                toggleBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Mark Completed`;
+            }
+
+            drawer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+
+        // Jump to task from modal list
+        function showTaskDetailsByRef(ref) {
+            const task = taskDatabase.find(t => t.ref === ref);
+            if (task) {
+                showTaskDetails(task);
+                const row = document.getElementById(`gantt-row-${ref}`);
+                if (row) {
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    row.classList.add("bg-rose-100");
+                    setTimeout(() => {
+                        row.classList.remove("bg-rose-100");
+                    }, 1500);
+                }
+            }
+        }
+
+        function closeDrawer() {
+            document.getElementById("detail-drawer").classList.add("hidden");
+        }
+
+        function updateGlobalStats() {
+            const completed = taskDatabase.filter(t => t.completed).length;
+            const percentage = Math.round((completed / taskDatabase.length) * 100);
+            
+            document.getElementById("stat-completion").innerText = `${percentage}%`;
+        }
+
+        // Completion Modal Mechanics
+        function openCompletionModal() {
+            const modal = document.getElementById("completion-modal");
+            modal.classList.remove("hidden");
+            populateModalLists();
+        }
+
+        function closeCompletionModal() {
+            document.getElementById("completion-modal").classList.add("hidden");
+        }
+
+        function populateModalLists() {
+            const completedList = document.getElementById("modal-completed-list");
+            const pendingList = document.getElementById("modal-pending-list");
+            
+            completedList.innerHTML = "";
+            pendingList.innerHTML = "";
+
+            const completedTasks = taskDatabase.filter(t => t.completed);
+            const pendingTasks = taskDatabase.filter(t => !t.completed);
+
+            document.getElementById("modal-completed-count").innerText = completedTasks.length;
+            document.getElementById("modal-pending-count").innerText = pendingTasks.length;
+
+            completedTasks.forEach(task => {
+                const item = document.createElement("div");
+                item.className = "flex items-center justify-between p-3 bg-white border border-[#E3DDCF] hover:border-emerald-500 rounded-lg cursor-pointer hover:bg-[#FAF8F2] transition-all";
+                item.innerHTML = `
+                    <div class="flex items-center gap-2" onclick="closeCompletionModal(); showTaskDetailsByRef('${task.ref}')">
+                        <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
+                        <span class="text-xs font-bold text-[#2A2421] truncate max-w-[240px]">${task.name}</span>
+                    </div>
+                    <button onclick="toggleTaskCompletion('${task.ref}')" class="text-[#6E645A] hover:text-amber-600 transition-colors">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+                `;
+                completedList.appendChild(item);
+            });
+
+            pendingTasks.forEach(task => {
+                const isOverdue = new Date(task.end) < new Date(simulatedTodayString);
+                const item = document.createElement("div");
+                item.className = `flex items-center justify-between p-3 bg-white border rounded-lg cursor-pointer hover:bg-[#FAF8F2] transition-all ${isOverdue ? 'border-red-300 hover:border-red-500' : 'border-[#E3DDCF] hover:border-rose-500'}`;
+                item.innerHTML = `
+                    <div class="flex items-center gap-2" onclick="closeCompletionModal(); showTaskDetailsByRef('${task.ref}')">
+                        <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
+                        <span class="text-xs font-bold text-[#2A2421] truncate max-w-[240px]">${task.name}</span>
+                        ${isOverdue ? '<span class="text-[8px] bg-red-50 text-red-700 border border-red-200 px-1.5 py-0.5 rounded font-bold uppercase animate-pulse">Overdue</span>' : ''}
+                    </div>
+                    <button onclick="toggleTaskCompletion('${task.ref}')" class="text-[#6E645A] hover:text-emerald-600 transition-colors">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </button>
+                `;
+                pendingList.appendChild(item);
+            });
+        }
+
+        // High-Fidelity Client-Side PDF Generation
+        function exportGanttPDF() {
+            const element = document.getElementById('gantt-render-root');
+            const btn = document.getElementById('btn-pdf-export');
+            const originalContent = btn.innerHTML;
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Generating PDF...';
+            btn.disabled = true;
+
+            const opt = {
+                margin:       [0.3, 0.3, 0.3, 0.3], 
+                filename:     'KMC_Luwero_T6_Battery_Plant_Workplan.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { 
+                    scale: 2, 
+                    useCORS: true,
+                    backgroundColor: '#F5F2EB', 
+                    scrollX: 0,
+                    scrollY: 0
+                },
+                jsPDF:        { unit: 'in', format: 'a3', orientation: 'landscape' } 
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+            }).catch(err => {
+                console.error("Landscape PDF generation failed: ", err);
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
