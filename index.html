@@ -453,7 +453,12 @@
         </div>
     </footer>
 
-    <script>
+    <script type="module">
+        // Import Google Firebase and Firestore standard modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
         // System variables and dataset
         const startDateString = "2026-07-08";
         const endDateString = "2026-07-31";
@@ -513,64 +518,118 @@
             return Math.round((date - start) / (1000 * 60 * 60 * 24));
         };
 
-        // Real-Time Cloud Sync Implementation
+        // Real-Time Cloud Sync Implementation (using Google Firestore)
         const CLOUD_STORAGE_KEY = "KMC_GANTT_PERSISTED_DB_CLOUD";
-        const CLOUD_ENDPOINT = "https://kvdb.io/KMC_Luwero_T6_Battery_Plant_V83/task_states";
+        let db, auth;
+        let isCloudActive = false;
 
-        // Pull state from Google Cloud (kvdb.io)
+        // Retrieve system credentials if available, otherwise default to demo variables
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'kmc-luwero-t6-gantt';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : {
+                apiKey: "AIzaSyAs-demo-key-here-for-local-sandbox-testing",
+                authDomain: "kmc-gantt-sync.firebaseapp.com",
+                projectId: "kmc-gantt-sync",
+                storageBucket: "kmc-gantt-sync.appspot.com",
+                messagingSenderId: "1234567890",
+                appId: "1:1234567890:web:abcdef"
+              };
+
         async function loadFromCloud() {
-            setCloudStatus("syncing", "Loading...");
+            setCloudStatus("syncing", "Connecting...");
             try {
-                const response = await fetch(CLOUD_ENDPOINT);
-                if (response.ok) {
-                    const cloudData = await response.json();
-                    taskDatabase.forEach(task => {
-                        if (cloudData[task.ref] !== undefined) {
-                            task.completed = cloudData[task.ref];
-                        }
-                    });
-                    setCloudStatus("synced", "Cloud Synced");
+                // Initialize Firebase
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Authenticate before queries (RULE 3)
+                let userCredential;
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    userCredential = await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
-                    setCloudStatus("offline", "Cache Loaded");
-                    loadFromCache();
+                    userCredential = await signInAnonymously(auth);
+                }
+
+                if (userCredential && auth.currentUser) {
+                    isCloudActive = true;
+                    setCloudStatus("synced", "Cloud Synced");
+                    listenToCloudUpdates();
+                } else {
+                    throw new Error("Authentication failed");
                 }
             } catch (e) {
-                console.warn("Cloud connection unavailable. Reverting to Offline Mode:", e);
-                setCloudStatus("offline", "Offline Mode");
+                console.warn("Google Firestore unavailable (Offline Mode):", e);
+                isCloudActive = false;
+                setCloudStatus("offline", "Local Cache");
                 loadFromCache();
+                renderGanttChart();
+                updateGlobalStats();
+                centerTimelineOnToday();
             }
-            renderGanttChart();
-            updateGlobalStats();
-            centerTimelineOnToday();
         }
 
-        // Push state to Google Cloud (kvdb.io) automatically on edit
+        function listenToCloudUpdates() {
+            if (!isCloudActive || !db) return;
+
+            // Strict collection path rule compliance (RULE 1)
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'gantt_states', 'current_state');
+            
+            // Listen real-time using safe error callback
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const cloudData = docSnap.data();
+                    if (cloudData && cloudData.states) {
+                        taskDatabase.forEach(task => {
+                            if (cloudData.states[task.ref] !== undefined) {
+                                task.completed = cloudData.states[task.ref];
+                            }
+                        });
+                        renderGanttChart();
+                        updateGlobalStats();
+                    }
+                } else {
+                    // Initialize empty cloud database if none exists
+                    syncToCloud();
+                }
+            }, (error) => {
+                console.error("Firestore sync subscription failed:", error);
+                setCloudStatus("offline", "Sync Offline");
+            });
+        }
+
         async function syncToCloud() {
             setCloudStatus("syncing", "Syncing...");
             
             // Backup locally first
             localStorage.setItem(CLOUD_STORAGE_KEY, JSON.stringify(taskDatabase));
             
+            if (!isCloudActive || !db || !auth || !auth.currentUser) {
+                setTimeout(() => {
+                    setCloudStatus("offline", "Saved Locally");
+                }, 500);
+                return;
+            }
+
             try {
                 const stateMap = {};
                 taskDatabase.forEach(t => {
                     stateMap[t.ref] = t.completed;
                 });
                 
-                const response = await fetch(CLOUD_ENDPOINT, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(stateMap)
+                // Strict collection path rule compliance (RULE 1)
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'gantt_states', 'current_state');
+                await setDoc(docRef, {
+                    states: stateMap,
+                    updatedAt: new Date().toISOString(),
+                    updatedBy: activeEditorName || 'Lead'
                 });
                 
-                if (response.ok) {
-                    setCloudStatus("synced", "Cloud Synced");
-                } else {
-                    setCloudStatus("offline", "Save Failed");
-                }
+                setCloudStatus("synced", "Cloud Synced");
             } catch (e) {
                 console.error("Cloud synchronization failed:", e);
-                setCloudStatus("offline", "Sync Error");
+                setCloudStatus("offline", "Save Failed");
             }
         }
 
@@ -597,6 +656,7 @@
             const ping = document.getElementById("cloud-ping");
             const dot = document.getElementById("cloud-dot");
 
+            if (!label) return;
             label.innerText = text;
 
             if (status === "synced") {
@@ -643,7 +703,7 @@
         }
 
         // Toggle view grouping mode
-        function toggleGroupMode(mode) {
+        window.toggleGroupMode = function(mode) {
             currentGrouping = mode;
             document.getElementById("btn-group-chapter").className = mode === "chapter" 
                 ? "px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 bg-rose-600 text-white shadow-sm"
@@ -656,13 +716,13 @@
             renderGanttChart();
         }
 
-        function applyFilters() {
+        window.applyFilters = function() {
             activeLeadFilter = document.getElementById("filter-lead").value;
             activeMemberFilter = document.getElementById("filter-member").value;
             renderGanttChart();
         }
 
-        function toggleHighValueOnly() {
+        window.toggleHighValueOnly = function() {
             highValueOnly = !highValueOnly;
             const btn = document.getElementById("btn-highvalue");
             if (highValueOnly) {
@@ -684,17 +744,17 @@
         }
 
         // Modal & Authorization Access Control Mechanism
-        function openAuthModal() {
+        window.openAuthModal = function() {
             document.getElementById("auth-modal").classList.remove("hidden");
             document.getElementById("auth-error").classList.add("hidden");
             document.getElementById("auth-passcode").value = "";
         }
 
-        function closeAuthModal() {
+        window.closeAuthModal = function() {
             document.getElementById("auth-modal").classList.add("hidden");
         }
 
-        function attemptAuthentication() {
+        window.attemptAuthentication = function() {
             const chosenUser = document.getElementById("auth-user-profile").value;
             const enteredPasscode = document.getElementById("auth-passcode").value;
             const errorBanner = document.getElementById("auth-error");
@@ -750,7 +810,7 @@
             }
         }
 
-        function dismissToast() {
+        window.dismissToast = function() {
             const toast = document.getElementById("toast-warning");
             toast.classList.add("translate-y-10");
             setTimeout(() => {
@@ -759,7 +819,7 @@
         }
 
         // Toggle task completion from any click element
-        function toggleTaskCompletion(taskRef) {
+        window.toggleTaskCompletion = function(taskRef) {
             if (!isAuthorized) {
                 showCustomToast(
                     "Access Blocked (View-Only Mode)", 
@@ -855,10 +915,10 @@
                     labelDiv.innerHTML = `
                         <div class="flex items-center gap-2">
                             <input type="checkbox" ${task.completed ? 'checked' : ''} 
-                                   onclick="event.stopPropagation(); toggleTaskCompletion('${task.ref}')"
+                                   onclick="event.stopPropagation(); window.toggleTaskCompletion('${task.ref}')"
                                    class="w-4 h-4 rounded text-rose-600 bg-white border-[#E3DDCF] focus:ring-rose-500 focus:ring-2 cursor-pointer transition-all">
                             <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
-                            <span onclick="showTaskDetailsByRef('${task.ref}')" class="text-xs font-bold cursor-pointer text-[#2A2421] group-hover:text-rose-600 transition-colors truncate max-w-[190px]">${task.name}</span>
+                            <span onclick="window.showTaskDetailsByRef('${task.ref}')" class="text-xs font-bold cursor-pointer text-[#2A2421] group-hover:text-rose-600 transition-colors truncate max-w-[190px]">${task.name}</span>
                         </div>
                         <div class="flex justify-between items-center mt-1.5 ml-6">
                             <span class="text-[10px] text-[#6E645A] font-semibold flex items-center gap-1">
@@ -984,7 +1044,7 @@
             document.getElementById("drawer-avatar-member").innerText = task.member.charAt(0);
 
             const toggleBtn = document.getElementById("drawer-toggle-btn");
-            toggleBtn.setAttribute("onclick", `toggleTaskCompletion('${task.ref}')`);
+            toggleBtn.setAttribute("onclick", `window.toggleTaskCompletion('${task.ref}')`);
             if (task.completed) {
                 toggleBtn.className = "mt-1 px-4 py-1.5 w-full bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm";
                 toggleBtn.innerHTML = `<i class="fa-solid fa-rotate-left"></i> Mark Incomplete`;
@@ -997,7 +1057,7 @@
         }
 
         // Jump to task from modal list
-        function showTaskDetailsByRef(ref) {
+        window.showTaskDetailsByRef = function(ref) {
             const task = taskDatabase.find(t => t.ref === ref);
             if (task) {
                 showTaskDetails(task);
@@ -1012,7 +1072,7 @@
             }
         }
 
-        function closeDrawer() {
+        window.closeDrawer = function() {
             document.getElementById("detail-drawer").classList.add("hidden");
         }
 
@@ -1020,17 +1080,18 @@
             const completed = taskDatabase.filter(t => t.completed).length;
             const percentage = Math.round((completed / taskDatabase.length) * 100);
             
-            document.getElementById("stat-completion").innerText = `${percentage}%`;
+            const statComp = document.getElementById("stat-completion");
+            if (statComp) statComp.innerText = `${percentage}%`;
         }
 
         // Completion Modal Mechanics
-        function openCompletionModal() {
+        window.openCompletionModal = function() {
             const modal = document.getElementById("completion-modal");
             modal.classList.remove("hidden");
             populateModalLists();
         }
 
-        function closeCompletionModal() {
+        window.closeCompletionModal = function() {
             document.getElementById("completion-modal").classList.add("hidden");
         }
 
@@ -1051,11 +1112,11 @@
                 const item = document.createElement("div");
                 item.className = "flex items-center justify-between p-3 bg-white border border-[#E3DDCF] hover:border-emerald-500 rounded-lg cursor-pointer hover:bg-[#FAF8F2] transition-all";
                 item.innerHTML = `
-                    <div class="flex items-center gap-2" onclick="closeCompletionModal(); showTaskDetailsByRef('${task.ref}')">
+                    <div class="flex items-center gap-2" onclick="closeCompletionModal(); window.showTaskDetailsByRef('${task.ref}')">
                         <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
                         <span class="text-xs font-bold text-[#2A2421] truncate max-w-[240px]">${task.name}</span>
                     </div>
-                    <button onclick="toggleTaskCompletion('${task.ref}')" class="text-[#6E645A] hover:text-amber-600 transition-colors">
+                    <button onclick="window.toggleTaskCompletion('${task.ref}')" class="text-[#6E645A] hover:text-amber-600 transition-colors">
                         <i class="fa-solid fa-rotate-left"></i>
                     </button>
                 `;
@@ -1067,12 +1128,12 @@
                 const item = document.createElement("div");
                 item.className = `flex items-center justify-between p-3 bg-white border rounded-lg cursor-pointer hover:bg-[#FAF8F2] transition-all ${isOverdue ? 'border-red-300 hover:border-red-500' : 'border-[#E3DDCF] hover:border-rose-500'}`;
                 item.innerHTML = `
-                    <div class="flex items-center gap-2" onclick="closeCompletionModal(); showTaskDetailsByRef('${task.ref}')">
+                    <div class="flex items-center gap-2" onclick="closeCompletionModal(); window.showTaskDetailsByRef('${task.ref}')">
                         <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
                         <span class="text-xs font-bold text-[#2A2421] truncate max-w-[240px]">${task.name}</span>
                         ${isOverdue ? '<span class="text-[8px] bg-red-50 text-red-700 border border-red-200 px-1.5 py-0.5 rounded font-bold uppercase animate-pulse">Overdue</span>' : ''}
                     </div>
-                    <button onclick="toggleTaskCompletion('${task.ref}')" class="text-[#6E645A] hover:text-emerald-600 transition-colors">
+                    <button onclick="window.toggleTaskCompletion('${task.ref}')" class="text-[#6E645A] hover:text-emerald-600 transition-colors">
                         <i class="fa-solid fa-circle-check"></i>
                     </button>
                 `;
@@ -1081,7 +1142,7 @@
         }
 
         // High-Fidelity Client-Side PDF Generation
-        function exportGanttPDF() {
+        window.exportGanttPDF = function() {
             const element = document.getElementById('gantt-render-root');
             const btn = document.getElementById('btn-pdf-export');
             const originalContent = btn.innerHTML;
