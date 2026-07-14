@@ -16,10 +16,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <script>
-        // Global scope declaration to handle image load errors gracefully
         let fallbackTriggered = false;
         function handleLogoFallback() {
-            if (fallbackTriggered) return; // Prevent infinite loops if fallback fails
+            if (fallbackTriggered) return;
             fallbackTriggered = true;
             
             const mainImg = document.getElementById("kmc-main-logo");
@@ -27,7 +26,7 @@
                 // Tier 2 Fallback: Attempt local directory loading
                 mainImg.src = "KIIRA MOTORS CORPORATION LOGO Single.png";
                 
-                // If local path also fails, trigger Tier 3: Vector Render
+                // If local path also fails, trigger Tier 3: High-Fidelity Vector Render
                 mainImg.onerror = function() {
                     const container = document.getElementById("kmc-logo-container");
                     if (container) {
@@ -107,7 +106,7 @@
             <!-- Brand & Mission Statement -->
             <div class="flex items-center gap-4">
                 <div id="kmc-logo-container" class="p-1 bg-white rounded-xl border border-[#E3DDCF] flex items-center justify-center h-12 w-32 overflow-hidden">
-                    <!-- Tier 1: Pull directly from the Google Drive direct image stream link -->
+                    <!-- Direct Google Drive stream link -->
                     <img src="https://lh3.googleusercontent.com/d/14LT4qnflbiBeF7xaG9HusblSDW7EYA1_" 
                          id="kmc-main-logo"
                          onerror="handleLogoFallback()" 
@@ -140,7 +139,7 @@
                     </div>
                 </div>
 
-                <!-- Real-Time Cloud Synchronization Badge (Pulsing feedback) -->
+                <!-- Real-Time Cloud Synchronization Badge -->
                 <div id="cloud-sync-badge" class="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-4 py-2 flex items-center gap-2.5 transition-all text-emerald-800">
                     <span class="flex h-2 w-2 relative">
                         <span id="cloud-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -173,7 +172,7 @@
         </div>
     </header>
 
-    <!-- Interactive Filter & Dashboard Control Panel (High-Legibility Blue/Slate Theme) -->
+    <!-- Interactive Filter & Dashboard Control Panel (High-Legibility Slate Cockpit Theme) -->
     <main class="flex-grow p-4 md:p-6 max-w-7xl mx-auto w-full flex flex-col gap-6">
         <section class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg text-white">
             <div class="flex flex-col gap-4">
@@ -453,12 +452,7 @@
         </div>
     </footer>
 
-    <script type="module">
-        // Import Google Firebase and Firestore standard modules
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+    <script>
         // System variables and dataset
         const startDateString = "2026-07-08";
         const endDateString = "2026-07-31";
@@ -518,134 +512,83 @@
             return Math.round((date - start) / (1000 * 60 * 60 * 24));
         };
 
-        // Real-Time Cloud Sync Implementation (using Google Firestore)
-        const CLOUD_STORAGE_KEY = "KMC_GANTT_PERSISTED_DB_CLOUD";
-        let db, auth;
-        let isCloudActive = false;
-
-        // Retrieve system credentials if available, otherwise default to demo variables
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'kmc-luwero-t6-gantt';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : {
-                apiKey: "AIzaSyAs-demo-key-here-for-local-sandbox-testing",
-                authDomain: "kmc-gantt-sync.firebaseapp.com",
-                projectId: "kmc-gantt-sync",
-                storageBucket: "kmc-gantt-sync.appspot.com",
-                messagingSenderId: "1234567890",
-                appId: "1:1234567890:web:abcdef"
-              };
+        // Real-Time Cloud Sync Implementation (Universal CORS API)
+        const LOCAL_STORAGE_KEY = "KMC_GANTT_PERSISTED_DB_LOCAL";
+        // Publicly open, non-blocking Key-Value token coordinate for the shared Luwero workplan
+        const CLOUD_SYNC_URL = "https://api.keyvalue.xyz/7c8b4d9a/kmc_battery_gantt_v83";
 
         async function loadFromCloud() {
             setCloudStatus("syncing", "Connecting...");
             try {
-                // Initialize Firebase
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-
-                // Authenticate before queries (RULE 3)
-                let userCredential;
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    userCredential = await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    userCredential = await signInAnonymously(auth);
-                }
-
-                if (userCredential && auth.currentUser) {
-                    isCloudActive = true;
-                    setCloudStatus("synced", "Cloud Synced");
-                    listenToCloudUpdates();
-                } else {
-                    throw new Error("Authentication failed");
-                }
-            } catch (e) {
-                console.warn("Google Firestore unavailable (Offline Mode):", e);
-                isCloudActive = false;
-                setCloudStatus("offline", "Local Cache");
-                loadFromCache();
-                renderGanttChart();
-                updateGlobalStats();
-                centerTimelineOnToday();
-            }
-        }
-
-        function listenToCloudUpdates() {
-            if (!isCloudActive || !db) return;
-
-            // Strict collection path rule compliance (RULE 1)
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'gantt_states', 'current_state');
-            
-            // Listen real-time using safe error callback
-            onSnapshot(docRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const cloudData = docSnap.data();
-                    if (cloudData && cloudData.states) {
+                const response = await fetch(CLOUD_SYNC_URL);
+                if (response.ok) {
+                    const cloudData = await response.json();
+                    if (cloudData && typeof cloudData === 'object') {
                         taskDatabase.forEach(task => {
-                            if (cloudData.states[task.ref] !== undefined) {
-                                task.completed = cloudData.states[task.ref];
+                            if (cloudData[task.ref] !== undefined) {
+                                task.completed = cloudData[task.ref];
                             }
                         });
-                        renderGanttChart();
-                        updateGlobalStats();
+                        setCloudStatus("synced", "Cloud Synced");
+                        // Backup changes to local storage
+                        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cloudData));
                     }
                 } else {
-                    // Initialize empty cloud database if none exists
-                    syncToCloud();
+                    throw new Error("Cloud state not created yet");
                 }
-            }, (error) => {
-                console.error("Firestore sync subscription failed:", error);
-                setCloudStatus("offline", "Sync Offline");
-            });
+            } catch (e) {
+                console.warn("Cloud Sync Unavailable (Using Local Cache fallback):", e);
+                setCloudStatus("offline", "Saved Locally");
+                loadFromCache();
+            }
+            renderGanttChart();
+            updateGlobalStats();
+            centerTimelineOnToday();
         }
 
         async function syncToCloud() {
             setCloudStatus("syncing", "Syncing...");
             
-            // Backup locally first
-            localStorage.setItem(CLOUD_STORAGE_KEY, JSON.stringify(taskDatabase));
-            
-            if (!isCloudActive || !db || !auth || !auth.currentUser) {
-                setTimeout(() => {
-                    setCloudStatus("offline", "Saved Locally");
-                }, 500);
-                return;
-            }
+            // Format simple state mapping payload
+            const stateMap = {};
+            taskDatabase.forEach(t => {
+                stateMap[t.ref] = t.completed;
+            });
+
+            // Backup locally immediately
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(stateMap));
 
             try {
-                const stateMap = {};
-                taskDatabase.forEach(t => {
-                    stateMap[t.ref] = t.completed;
+                // Post updated mapping back to the open cloud coordinate
+                const response = await fetch(CLOUD_SYNC_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(stateMap)
                 });
                 
-                // Strict collection path rule compliance (RULE 1)
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'gantt_states', 'current_state');
-                await setDoc(docRef, {
-                    states: stateMap,
-                    updatedAt: new Date().toISOString(),
-                    updatedBy: activeEditorName || 'Lead'
-                });
-                
-                setCloudStatus("synced", "Cloud Synced");
+                if (response.ok) {
+                    setCloudStatus("synced", "Cloud Synced");
+                } else {
+                    throw new Error("Sync write error");
+                }
             } catch (e) {
                 console.error("Cloud synchronization failed:", e);
-                setCloudStatus("offline", "Save Failed");
+                setCloudStatus("offline", "Saved Locally");
             }
         }
 
         function loadFromCache() {
-            const cachedDB = localStorage.getItem(CLOUD_STORAGE_KEY);
+            const cachedDB = localStorage.getItem(LOCAL_STORAGE_KEY);
             if (cachedDB) {
                 try {
                     const parsed = JSON.parse(cachedDB);
                     taskDatabase.forEach(task => {
-                        const saved = parsed.find(p => p.ref === task.ref);
-                        if (saved) {
-                            task.completed = saved.completed;
+                        if (parsed[task.ref] !== undefined) {
+                            task.completed = parsed[task.ref];
                         }
                     });
                 } catch(e) {
-                    console.error("Local Storage sync failed: ", e);
+                    console.error("Local Storage parse failed:", e);
                 }
             }
         }
@@ -668,6 +611,7 @@
                 ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75";
                 dot.className = "relative inline-flex rounded-full h-2 w-2 bg-amber-600";
             } else {
+                // Safe offline cache state
                 badge.className = "bg-rose-500/10 border border-rose-500/30 rounded-lg px-4 py-2 flex items-center gap-2.5 transition-all text-rose-800";
                 ping.className = "hidden";
                 dot.className = "relative inline-flex rounded-full h-2 w-2 bg-rose-600";
@@ -832,7 +776,7 @@
             if (task) {
                 task.completed = !task.completed;
                 
-                // Fire dynamic sync payload background task
+                // Fire dynamic background cloud sync
                 syncToCloud();
                 
                 updateGlobalStats();
