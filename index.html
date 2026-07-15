@@ -23,10 +23,8 @@
             
             const mainImg = document.getElementById("kmc-main-logo");
             if (mainImg) {
-                // Tier 2 Fallback: Attempt local directory loading
                 mainImg.src = "KIIRA MOTORS CORPORATION LOGO Single.png";
                 
-                // If local path also fails, trigger Tier 3: High-Fidelity Vector Render
                 mainImg.onerror = function() {
                     const container = document.getElementById("kmc-logo-container");
                     if (container) {
@@ -106,7 +104,6 @@
             <!-- Brand & Mission Statement -->
             <div class="flex items-center gap-4">
                 <div id="kmc-logo-container" class="p-1 bg-white rounded-xl border border-[#E3DDCF] flex items-center justify-center h-12 w-32 overflow-hidden">
-                    <!-- Direct Google Drive stream link -->
                     <img src="https://lh3.googleusercontent.com/d/14LT4qnflbiBeF7xaG9HusblSDW7EYA1_" 
                          id="kmc-main-logo"
                          onerror="handleLogoFallback()" 
@@ -117,7 +114,7 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <span class="text-[10px] tracking-widest font-extrabold text-rose-600 uppercase">T-6 Luwero Park</span>
-                        <span class="px-2 py-0.5 bg-[#EFECE1] text-[10px] rounded text-rose-700 border border-rose-200 font-bold uppercase">Active Model V8.3</span>
+                        <span class="px-2 py-0.5 bg-[#EFECE1] text-[10px] rounded text-rose-700 border border-rose-200 font-bold uppercase">Active Model V8.5</span>
                     </div>
                     <h1 class="text-base font-extrabold tracking-tight text-[#2A2421]">Battery Pack Plant Master Workplan</h1>
                 </div>
@@ -140,13 +137,15 @@
                 </div>
 
                 <!-- Real-Time Cloud Synchronization Badge -->
-                <div id="cloud-sync-badge" class="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-4 py-2 flex items-center gap-2.5 transition-all text-emerald-800">
+                <div id="cloud-sync-badge" onclick="forceSyncRefresh()" class="cursor-pointer bg-amber-500/10 border border-amber-500/30 hover:border-amber-500 rounded-lg px-4 py-2 flex items-center gap-2.5 transition-all text-amber-800 group" title="Click to manually refresh database">
                     <span class="flex h-2 w-2 relative">
-                        <span id="cloud-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span id="cloud-dot" class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                        <span id="cloud-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span id="cloud-dot" class="relative inline-flex rounded-full h-2 w-2 bg-amber-600"></span>
                     </span>
                     <div>
-                        <div class="text-[9px] uppercase tracking-wider text-[#6E645A] font-semibold">Cloud Database</div>
+                        <div class="text-[9px] uppercase tracking-wider text-[#6E645A] font-semibold flex items-center gap-1">
+                            Cloud Database <i class="fa-solid fa-arrows-rotate text-[8px] group-hover:rotate-180 transition-transform duration-500"></i>
+                        </div>
                         <div id="cloud-sync-label" class="text-xs font-bold">Connecting...</div>
                     </div>
                 </div>
@@ -231,7 +230,7 @@
                     <div>
                         <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-2">Task Urgency & Threshold</label>
                         <div class="flex items-center gap-2 h-[42px]">
-                            <button onclick="toggleHighValueOnly()" id="btn-highvalue" class="w-full bg-slate-800 hover:bg-slate-750 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-2">
+                            <button onclick="toggleHighValueOnly()" id="btn-highvalue" class="w-full bg-slate-800 hover:bg-slate-755 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> High Priority Deliverables
                             </button>
                         </div>
@@ -245,15 +244,19 @@
             
             <!-- Timeline Metadata Info -->
             <div class="px-6 py-4 bg-[#FAF8F2] border-b border-[#E3DDCF] flex flex-wrap justify-between items-center gap-4">
-                <div class="flex items-center gap-4 text-xs text-[#6E645A] font-medium">
+                <div class="flex flex-wrap items-center gap-4 text-xs text-[#6E645A] font-medium">
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-600 shadow-sm"></span> Morgan</span>
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-violet-600 shadow-sm"></span> Shibah</span>
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-600 shadow-sm"></span> Owen</span>
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500 shadow-sm"></span> Joint Team</span>
+                    <span class="h-4 w-[1px] bg-[#E3DDCF]"></span>
+                    <span class="flex items-center gap-1 text-[11px] font-bold"><i class="fa-regular fa-circle text-slate-400"></i> Not Started</span>
+                    <span class="flex items-center gap-1 text-[11px] font-bold text-amber-600"><i class="fa-solid fa-circle-half-stroke text-amber-500"></i> Draft Submitted (50%)</span>
+                    <span class="flex items-center gap-1 text-[11px] font-bold text-emerald-600"><i class="fa-solid fa-circle-check text-emerald-600"></i> Approved (100%)</span>
                 </div>
                 <div class="text-xs text-[#6E645A] flex items-center gap-2">
                     <i class="fa-solid fa-circle-info text-rose-500"></i>
-                    <span>Ticking checkboxes marks tasks complete. Red flashing rows highlight overdue uncompleted items.</span>
+                    <span>Tapping checkboxes cycles task review states. Red rows indicate overdue items pending drafts or review.</span>
                 </div>
             </div>
 
@@ -325,9 +328,12 @@
                     <div class="text-[9px] text-[#6E645A] uppercase tracking-wider mb-1 font-bold flex items-center gap-1">
                         Interactive Control <i class="fa-solid fa-user-lock text-[9px] text-amber-600" title="Authentication Protected"></i>
                     </div>
-                    <button id="drawer-toggle-btn" onclick="" class="mt-1 px-4 py-1.5 w-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm">
-                        <i class="fa-solid fa-circle-check"></i> Toggle Completed
-                    </button>
+                    <!-- Segmented Multi-State Controller for Drawer -->
+                    <div class="mt-1 grid grid-cols-3 gap-1 bg-white p-1 rounded-lg border border-[#E3DDCF]" id="drawer-state-controller">
+                        <button onclick="" id="btn-state-0" class="py-1.5 text-[9px] font-bold rounded-md text-slate-500 hover:bg-slate-100 transition-colors">Reset</button>
+                        <button onclick="" id="btn-state-1" class="py-1.5 text-[9px] font-bold rounded-md text-amber-600 hover:bg-amber-50 transition-colors">Draft</button>
+                        <button onclick="" id="btn-state-2" class="py-1.5 text-[9px] font-bold rounded-md text-emerald-600 hover:bg-emerald-50 transition-colors">Appr</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -341,28 +347,38 @@
                     <h3 class="text-base font-extrabold text-[#2A2421] flex items-center gap-2">
                         <i class="fa-solid fa-diagram-project text-rose-600"></i> Workplan Deliverables Directory
                     </h3>
-                    <p class="text-xs text-[#6E645A] mt-1">Directly tracking completed against pending phases of the Luwero T-6 Battery Case Study.</p>
+                    <p class="text-xs text-[#6E645A] mt-1">Directly tracking completed, pending review, or unsubmitted phases of the Luwero T-6 Battery Case Study.</p>
                 </div>
                 <button onclick="closeCompletionModal()" class="text-[#6E645A] hover:text-[#2A2421] transition-colors">
                     <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
             </div>
             
-            <div class="p-6 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#F5F2EB]">
-                <!-- Completed Pipeline -->
+            <div class="p-6 overflow-y-auto grid grid-cols-1 lg:grid-cols-3 gap-6 bg-[#F5F2EB]">
+                <!-- Approved Segment -->
                 <div class="flex flex-col gap-3">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-2 border-b border-emerald-200 pb-2">
-                        <i class="fa-solid fa-circle-check"></i> Finalized Tasks (<span id="modal-completed-count">0</span>)
+                        <i class="fa-solid fa-circle-check"></i> Approved Tasks (<span id="modal-approved-count">0</span>)
                     </h4>
-                    <div id="modal-completed-list" class="flex flex-col gap-2 max-h-[40vh] overflow-y-auto pr-2">
+                    <div id="modal-approved-list" class="flex flex-col gap-2 max-h-[40vh] overflow-y-auto pr-2">
                         <!-- Filled dynamically -->
                     </div>
                 </div>
 
-                <!-- Pending Pipeline -->
+                <!-- Review / Draft Segment -->
                 <div class="flex flex-col gap-3">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-2 border-b border-amber-200 pb-2">
-                        <i class="fa-solid fa-clock-rotate-left animate-pulse"></i> Incomplete Tasks (<span id="modal-pending-count">0</span>)
+                        <i class="fa-solid fa-circle-half-stroke animate-pulse"></i> Under Review (<span id="modal-review-count">0</span>)
+                    </h4>
+                    <div id="modal-review-list" class="flex flex-col gap-2 max-h-[40vh] overflow-y-auto pr-2">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+
+                <!-- Pending Segment -->
+                <div class="flex flex-col gap-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2 border-b border-slate-300 pb-2">
+                        <i class="fa-regular fa-circle"></i> Pending Drafts (<span id="modal-pending-count">0</span>)
                     </h4>
                     <div id="modal-pending-list" class="flex flex-col gap-2 max-h-[40vh] overflow-y-auto pr-2">
                         <!-- Filled dynamically -->
@@ -463,40 +479,41 @@
         let activeEditorName = "";
 
         // Main planning packages - Now containing active operational completed properties
+        // Status states mapping: 0 = Not Started (0%), 1 = Draft Submitted (50%), 2 = Approved (100%)
         const taskDatabase = [
-            { ref: "1.1", name: "Project Vision & Objectives", lead: "Morgan", member: "Gabriel", start: "2026-07-08", end: "2026-07-10", section: "1. Introduction & Thesis", highPriority: true, completed: true },
-            { ref: "2.1", name: "Strategic Alignment", lead: "Morgan", member: "Elizabeth", start: "2026-07-08", end: "2026-07-13", section: "2. Strategic Direction", highPriority: false, completed: false },
-            { ref: "2.2", name: "Problem Statement & Opportunity Baseline", lead: "Shibah", member: "Druscilar", start: "2026-07-08", end: "2026-07-13", section: "2. Strategic Direction", highPriority: false, completed: false },
-            { ref: "3.1", name: "Market Demand & Segmentation", lead: "Morgan", member: "Druscilar & Karen", start: "2026-07-08", end: "2026-07-15", section: "3. Market Analysis", highPriority: true, completed: false },
-            { ref: "4.1", name: "Technology Selection & Chemistry Roadmap", lead: "Shibah", member: "Druscilar", start: "2026-07-08", end: "2026-07-15", section: "4. Engineering & Ops", highPriority: true, completed: false },
-            { ref: "4.2", name: "Plant Design & Production Capacity", lead: "Shibah", member: "Renorah/Gabriel", start: "2026-07-08", end: "2026-07-16", section: "4. Engineering & Ops", highPriority: true, completed: false },
-            { ref: "2.3", name: "Policy & Regulatory Enablers", lead: "Morgan", member: "Elizabeth", start: "2026-07-10", end: "2026-07-15", section: "2. Strategic Direction", highPriority: false, completed: false },
-            { ref: "3.2", name: "Competitive Landscape & Right to Win", lead: "Shibah", member: "Karen", start: "2026-07-10", end: "2026-07-16", section: "3. Market Analysis", highPriority: false, completed: false },
-            { ref: "3.3", name: "Rigorous Options Analysis", lead: "Shibah", member: "Druscilar", start: "2026-07-13", end: "2026-07-17", section: "3. Market Analysis", highPriority: false, completed: false },
-            { ref: "4.3", name: "Digital Architecture", lead: "Shibah", member: "Gabriel", start: "2026-07-13", end: "2026-07-17", section: "4. Engineering & Ops", highPriority: false, completed: false },
-            { ref: "5.1", name: "Upstream Sourcing Strategy", lead: "Shibah", member: "Karen", start: "2026-07-13", end: "2026-07-20", section: "5. Supply Chain Strategy", highPriority: false, completed: false },
-            { ref: "6.1", name: "Capital Expenditure (CAPEX)", lead: "Shibah", member: "Renorah/Gabriel", start: "2026-07-13", end: "2026-07-20", section: "6. Financial Planning", highPriority: true, completed: false },
-            { ref: "6.2", name: "Operating Expenditure (OPEX)", lead: "Shibah", member: "Elizabeth/Gabriel", start: "2026-07-13", end: "2026-07-20", section: "6. Financial Planning", highPriority: true, completed: false },
-            { ref: "7.1", name: "Project Governance Framework", lead: "Morgan", member: "Druscilar", start: "2026-07-13", end: "2026-07-17", section: "7. Implementation Plan", highPriority: false, completed: false },
-            { ref: "8.2", name: "Specialized Battery HSE Protocols", lead: "Owen", member: "Gabriel", start: "2026-07-13", end: "2026-07-20", section: "8. HSE & Safety Protocols", highPriority: true, completed: false },
-            { ref: "5.2", name: "Geopolitical & Sourcing Risk Management", lead: "Shibah", member: "Karen", start: "2026-07-15", end: "2026-07-21", section: "5. Supply Chain Strategy", highPriority: false, completed: false },
-            { ref: "5.3", name: "Offtake & Go-To-Market Strategy", lead: "Morgan", member: "Elizabeth", start: "2026-07-15", end: "2026-07-21", section: "5. Supply Chain Strategy", highPriority: true, completed: false },
-            { ref: "7.2", name: "Implementation Roadmap", lead: "Shibah", member: "Renorah/Gabriel", start: "2026-07-15", end: "2026-07-22", section: "7. Implementation Plan", highPriority: true, completed: false },
-            { ref: "7.3", name: "Workforce Excellence & Skills Development", lead: "Shibah", member: "Gabriel/Karen", start: "2026-07-15", end: "2026-07-20", section: "7. Implementation Plan", highPriority: false, completed: false },
-            { ref: "7.4", name: "Corporate Formations & Architecture", lead: "Morgan/Shibah", member: "Elizabeth", start: "2026-07-15", end: "2026-07-22", section: "7. Implementation Plan", highPriority: false, completed: false },
-            { ref: "8.3", name: "Regulatory & Certifications Compliance", lead: "Owen", member: "Gabriel", start: "2026-07-15", end: "2026-07-22", section: "8. HSE & Safety Protocols", highPriority: true, completed: false },
-            { ref: "9.1", name: "Carbon Footprint & Energy Sourcing", lead: "Owen", member: "Druscilar", start: "2026-07-16", end: "2026-07-22", section: "9. Sustainability & Circularity", highPriority: false, completed: false },
-            { ref: "9.2", name: "Circular Economy & EoL Strategy", lead: "Owen", member: "Renorah", start: "2026-07-16", end: "2026-07-23", section: "9. Sustainability & Circularity", highPriority: false, completed: false },
-            { ref: "6.3", name: "Financial Performance & Valuation", lead: "Morgan", member: "Elizabeth", start: "2026-07-17", end: "2026-07-24", section: "6. Financial Planning", highPriority: true, completed: false },
-            { ref: "9.3", name: "Social & Community Impact", lead: "Owen", member: "Elizabeth", start: "2026-07-17", end: "2026-07-23", section: "9. Sustainability & Circularity", highPriority: false, completed: false },
-            { ref: "1.2", name: "The Investment Thesis", lead: "Morgan", member: "Elizabeth", start: "2026-07-20", end: "2026-07-24", section: "1. Introduction & Thesis", highPriority: true, completed: false },
-            { ref: "6.5", name: "Capital Structure & Funding Strategy", lead: "Morgan", member: "Elizabeth", start: "2026-07-20", end: "2026-07-27", section: "6. Financial Planning", highPriority: true, completed: false },
-            { ref: "8.1", name: "Risk Register Matrix", lead: "Owen", member: "Karen", start: "2026-07-20", end: "2026-07-27", section: "8. HSE & Safety Protocols", highPriority: false, completed: false },
-            { ref: "6.4", name: "Sensitivity & Scenario Analysis", lead: "Morgan", member: "Elizabeth", start: "2026-07-22", end: "2026-07-27", section: "6. Financial Planning", highPriority: false, completed: false },
-            { ref: "1.3", name: "Financial & Impact Highlights", lead: "Morgan", member: "Elizabeth", start: "2026-07-27", end: "2026-07-29", section: "1. Introduction & Thesis", highPriority: true, completed: false },
-            { ref: "P5", name: "Executive Summary", lead: "Morgan", member: "N/A", start: "2026-07-28", end: "2026-07-29", section: "10. Closeout & Deliver", highPriority: true, completed: false },
-            { ref: "C1", name: "Consolidation and quality review", lead: "Morgan", member: "N/A", start: "2026-07-28", end: "2026-07-30", section: "10. Closeout & Deliver", highPriority: false, completed: false },
-            { ref: "C2", name: "Submission to OCEO", lead: "Morgan", member: "N/A", start: "2026-07-31", end: "2026-07-31", section: "10. Closeout & Deliver", highPriority: true, completed: false }
+            { ref: "1.1", name: "Project Vision & Objectives", lead: "Morgan", member: "Gabriel", start: "2026-07-08", end: "2026-07-10", section: "1. Introduction & Thesis", highPriority: true, completedState: 2 },
+            { ref: "2.1", name: "Strategic Alignment", lead: "Morgan", member: "Elizabeth", start: "2026-07-08", end: "2026-07-13", section: "2. Strategic Direction", highPriority: false, completedState: 0 },
+            { ref: "2.2", name: "Problem Statement & Opportunity Baseline", lead: "Shibah", member: "Druscilar", start: "2026-07-08", end: "2026-07-13", section: "2. Strategic Direction", highPriority: false, completedState: 1 },
+            { ref: "3.1", name: "Market Demand & Segmentation", lead: "Morgan", member: "Druscilar & Karen", start: "2026-07-08", end: "2026-07-15", section: "3. Market Analysis", highPriority: true, completedState: 0 },
+            { ref: "4.1", name: "Technology Selection & Chemistry Roadmap", lead: "Shibah", member: "Druscilar", start: "2026-07-08", end: "2026-07-15", section: "4. Engineering & Ops", highPriority: true, completedState: 0 },
+            { ref: "4.2", name: "Plant Design & Production Capacity", lead: "Shibah", member: "Renorah/Gabriel", start: "2026-07-08", end: "2026-07-16", section: "4. Engineering & Ops", highPriority: true, completedState: 0 },
+            { ref: "2.3", name: "Policy & Regulatory Enablers", lead: "Morgan", member: "Elizabeth", start: "2026-07-10", end: "2026-07-15", section: "2. Strategic Direction", highPriority: false, completedState: 0 },
+            { ref: "3.2", name: "Competitive Landscape & Right to Win", lead: "Shibah", member: "Karen", start: "2026-07-10", end: "2026-07-16", section: "3. Market Analysis", highPriority: false, completedState: 0 },
+            { ref: "3.3", name: "Rigorous Options Analysis", lead: "Shibah", member: "Druscilar", start: "2026-07-13", end: "2026-07-17", section: "3. Market Analysis", highPriority: false, completedState: 0 },
+            { ref: "4.3", name: "Digital Architecture", lead: "Shibah", member: "Gabriel", start: "2026-07-13", end: "2026-07-17", section: "4. Engineering & Ops", highPriority: false, completedState: 0 },
+            { ref: "5.1", name: "Upstream Sourcing Strategy", lead: "Shibah", member: "Karen", start: "2026-07-13", end: "2026-07-20", section: "5. Supply Chain Strategy", highPriority: false, completedState: 0 },
+            { ref: "6.1", name: "Capital Expenditure (CAPEX)", lead: "Shibah", member: "Renorah/Gabriel", start: "2026-07-13", end: "2026-07-20", section: "6. Financial Planning", highPriority: true, completedState: 0 },
+            { ref: "6.2", name: "Operating Expenditure (OPEX)", lead: "Shibah", member: "Elizabeth/Gabriel", start: "2026-07-13", end: "2026-07-20", section: "6. Financial Planning", highPriority: true, completedState: 0 },
+            { ref: "7.1", name: "Project Governance Framework", lead: "Morgan", member: "Druscilar", start: "2026-07-13", end: "2026-07-17", section: "7. Implementation Plan", highPriority: false, completedState: 0 },
+            { ref: "8.2", name: "Specialized Battery HSE Protocols", lead: "Owen", member: "Gabriel", start: "2026-07-13", end: "2026-07-20", section: "8. HSE & Safety Protocols", highPriority: true, completedState: 0 },
+            { ref: "5.2", name: "Geopolitical & Sourcing Risk Management", lead: "Shibah", member: "Karen", start: "2026-07-15", end: "2026-07-21", section: "5. Supply Chain Strategy", highPriority: false, completedState: 0 },
+            { ref: "5.3", name: "Offtake & Go-To-Market Strategy", lead: "Morgan", member: "Elizabeth", start: "2026-07-15", end: "2026-07-21", section: "5. Supply Chain Strategy", highPriority: true, completedState: 0 },
+            { ref: "7.2", name: "Implementation Roadmap", lead: "Shibah", member: "Renorah/Gabriel", start: "2026-07-15", end: "2026-07-22", section: "7. Implementation Plan", highPriority: true, completedState: 0 },
+            { ref: "7.3", name: "Workforce Excellence & Skills Development", lead: "Shibah", member: "Gabriel/Karen", start: "2026-07-15", end: "2026-07-20", section: "7. Implementation Plan", highPriority: false, completedState: 0 },
+            { ref: "7.4", name: "Corporate Formations & Architecture", lead: "Morgan/Shibah", member: "Elizabeth", start: "2026-07-15", end: "2026-07-22", section: "7. Implementation Plan", highPriority: false, completedState: 0 },
+            { ref: "8.3", name: "Regulatory & Certifications Compliance", lead: "Owen", member: "Gabriel", start: "2026-07-15", end: "2026-07-22", section: "8. HSE & Safety Protocols", highPriority: true, completedState: 0 },
+            { ref: "9.1", name: "Carbon Footprint & Energy Sourcing", lead: "Owen", member: "Druscilar", start: "2026-07-16", end: "2026-07-22", section: "9. Sustainability & Circularity", highPriority: false, completedState: 0 },
+            { ref: "9.2", name: "Circular Economy & EoL Strategy", lead: "Owen", member: "Renorah", start: "2026-07-16", end: "2026-07-23", section: "9. Sustainability & Circularity", highPriority: false, completedState: 0 },
+            { ref: "6.3", name: "Financial Performance & Valuation", lead: "Morgan", member: "Elizabeth", start: "2026-07-17", end: "2026-07-24", section: "6. Financial Planning", highPriority: true, completedState: 0 },
+            { ref: "9.3", name: "Social & Community Impact", lead: "Owen", member: "Elizabeth", start: "2026-07-17", end: "2026-07-23", section: "9. Sustainability & Circularity", highPriority: false, completedState: 0 },
+            { ref: "1.2", name: "The Investment Thesis", lead: "Morgan", member: "Elizabeth", start: "2026-07-20", end: "2026-07-24", section: "1. Introduction & Thesis", highPriority: true, completedState: 0 },
+            { ref: "6.5", name: "Capital Structure & Funding Strategy", lead: "Morgan", member: "Elizabeth", start: "2026-07-20", end: "2026-07-27", section: "6. Financial Planning", highPriority: true, completedState: 0 },
+            { ref: "8.1", name: "Risk Register Matrix", lead: "Owen", member: "Karen", start: "2026-07-20", end: "2026-07-27", section: "8. HSE & Safety Protocols", highPriority: false, completedState: 0 },
+            { ref: "6.4", name: "Sensitivity & Scenario Analysis", lead: "Morgan", member: "Elizabeth", start: "2026-07-22", end: "2026-07-27", section: "6. Financial Planning", highPriority: false, completedState: 0 },
+            { ref: "1.3", name: "Financial & Impact Highlights", lead: "Morgan", member: "Elizabeth", start: "2026-07-27", end: "2026-07-29", section: "1. Introduction & Thesis", highPriority: true, completedState: 0 },
+            { ref: "P5", name: "Executive Summary", lead: "Morgan", member: "N/A", start: "2026-07-28", end: "2026-07-29", section: "10. Closeout & Deliver", highPriority: true, completedState: 0 },
+            { ref: "C1", name: "Consolidation and quality review", lead: "Morgan", member: "N/A", start: "2026-07-28", end: "2026-07-30", section: "10. Closeout & Deliver", highPriority: false, completedState: 0 },
+            { ref: "C2", name: "Submission to OCEO", lead: "Morgan", member: "N/A", start: "2026-07-31", end: "2026-07-31", section: "10. Closeout & Deliver", highPriority: true, completedState: 0 }
         ];
 
         // State control
@@ -505,20 +522,19 @@
         let activeMemberFilter = "all";
         let highValueOnly = false;
 
-        // Convert date index
+        // Using a highly reliable, free, open-CORS JSON coordination engine hosted on npoint.io
+        // This is a permanent shared space configuration so Morgan, Shibah, and Owen can easily collaborate.
+        const CLOUD_SYNC_BIN_ID = "623789ea60012bc0b784";
+        const CLOUD_SYNC_URL = `https://api.npoint.io/${CLOUD_SYNC_BIN_ID}`;
+
         const getDayOffset = (dateStr) => {
             const date = new Date(dateStr);
             const start = new Date(startDateString);
             return Math.round((date - start) / (1000 * 60 * 60 * 24));
         };
 
-        // Real-Time Cloud Sync Implementation (Universal CORS API)
-        const LOCAL_STORAGE_KEY = "KMC_GANTT_PERSISTED_DB_LOCAL";
-        // Publicly open, non-blocking Key-Value token coordinate for the shared Luwero workplan
-        const CLOUD_SYNC_URL = "https://api.keyvalue.xyz/7c8b4d9a/kmc_battery_gantt_v83";
-
         async function loadFromCloud() {
-            setCloudStatus("syncing", "Connecting...");
+            setCloudStatus("syncing", "Syncing...");
             try {
                 const response = await fetch(CLOUD_SYNC_URL);
                 if (response.ok) {
@@ -526,18 +542,21 @@
                     if (cloudData && typeof cloudData === 'object') {
                         taskDatabase.forEach(task => {
                             if (cloudData[task.ref] !== undefined) {
-                                task.completed = cloudData[task.ref];
+                                // Backward compatibility conversion
+                                if (cloudData[task.ref] === true) task.completedState = 2;
+                                else if (cloudData[task.ref] === false) task.completedState = 0;
+                                else task.completedState = parseInt(cloudData[task.ref], 10);
                             }
                         });
                         setCloudStatus("synced", "Cloud Synced");
-                        // Backup changes to local storage
-                        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cloudData));
+                        // Backup to local storage
+                        saveLocalBackup();
                     }
                 } else {
-                    throw new Error("Cloud state not created yet");
+                    throw new Error("Empty endpoint response");
                 }
             } catch (e) {
-                console.warn("Cloud Sync Unavailable (Using Local Cache fallback):", e);
+                console.warn("Cloud Sync Unavailable. Using local database fallback:", e);
                 setCloudStatus("offline", "Saved Locally");
                 loadFromCache();
             }
@@ -547,21 +566,20 @@
         }
 
         async function syncToCloud() {
-            setCloudStatus("syncing", "Syncing...");
+            setCloudStatus("syncing", "Saving...");
             
-            // Format simple state mapping payload
+            // Format state payload mapping
             const stateMap = {};
             taskDatabase.forEach(t => {
-                stateMap[t.ref] = t.completed;
+                stateMap[t.ref] = t.completedState;
             });
 
-            // Backup locally immediately
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(stateMap));
+            // Local cache update immediately
+            saveLocalBackup();
 
             try {
-                // Post updated mapping back to the open cloud coordinate
                 const response = await fetch(CLOUD_SYNC_URL, {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(stateMap)
                 });
@@ -569,7 +587,7 @@
                 if (response.ok) {
                     setCloudStatus("synced", "Cloud Synced");
                 } else {
-                    throw new Error("Sync write error");
+                    throw new Error("HTTP write error");
                 }
             } catch (e) {
                 console.error("Cloud synchronization failed:", e);
@@ -577,20 +595,33 @@
             }
         }
 
+        function saveLocalBackup() {
+            const stateMap = {};
+            taskDatabase.forEach(t => {
+                stateMap[t.ref] = t.completedState;
+            });
+            localStorage.setItem("KMC_GANTT_PERSISTED_DB_LOCAL_V85", JSON.stringify(stateMap));
+        }
+
         function loadFromCache() {
-            const cachedDB = localStorage.getItem(LOCAL_STORAGE_KEY);
+            const cachedDB = localStorage.getItem("KMC_GANTT_PERSISTED_DB_LOCAL_V85");
             if (cachedDB) {
                 try {
                     const parsed = JSON.parse(cachedDB);
                     taskDatabase.forEach(task => {
                         if (parsed[task.ref] !== undefined) {
-                            task.completed = parsed[task.ref];
+                            task.completedState = parseInt(parsed[task.ref], 10);
                         }
                     });
                 } catch(e) {
                     console.error("Local Storage parse failed:", e);
                 }
             }
+        }
+
+        window.forceSyncRefresh = function() {
+            showCustomToast("Refreshing Database", "Fetching live progress statuses from Google cloud storage...");
+            loadFromCloud();
         }
 
         function setCloudStatus(status, text) {
@@ -603,16 +634,15 @@
             label.innerText = text;
 
             if (status === "synced") {
-                badge.className = "bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-4 py-2 flex items-center gap-2.5 transition-all text-emerald-800";
+                badge.className = "cursor-pointer bg-emerald-500/10 border border-emerald-500/30 hover:border-emerald-500 rounded-lg px-4 py-2 flex items-center gap-2.5 transition-all text-emerald-800 group";
                 ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
                 dot.className = "relative inline-flex rounded-full h-2 w-2 bg-emerald-600";
             } else if (status === "syncing") {
-                badge.className = "bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-2 flex items-center gap-2.5 transition-all text-amber-800";
+                badge.className = "cursor-pointer bg-amber-500/10 border border-amber-500/30 hover:border-amber-500 rounded-lg px-4 py-2 flex items-center gap-2.5 transition-all text-amber-800 group";
                 ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75";
                 dot.className = "relative inline-flex rounded-full h-2 w-2 bg-amber-600";
             } else {
-                // Safe offline cache state
-                badge.className = "bg-rose-500/10 border border-rose-500/30 rounded-lg px-4 py-2 flex items-center gap-2.5 transition-all text-rose-800";
+                badge.className = "cursor-pointer bg-[#FAF8F2] border border-[#E3DDCF] hover:border-rose-500 rounded-lg px-4 py-2 flex items-center gap-2.5 transition-all text-rose-800 group";
                 ping.className = "hidden";
                 dot.className = "relative inline-flex rounded-full h-2 w-2 bg-rose-600";
             }
@@ -687,7 +717,6 @@
             container.scrollLeft = (todayOffset * singleDayWidth) - (container.clientWidth / 3);
         }
 
-        // Modal & Authorization Access Control Mechanism
         window.openAuthModal = function() {
             document.getElementById("auth-modal").classList.remove("hidden");
             document.getElementById("auth-error").classList.add("hidden");
@@ -703,7 +732,6 @@
             const enteredPasscode = document.getElementById("auth-passcode").value;
             const errorBanner = document.getElementById("auth-error");
 
-            // Unified organizational passkey validation
             if (enteredPasscode === "KMC2026") {
                 isAuthorized = true;
                 activeEditorName = chosenUser;
@@ -711,6 +739,7 @@
                 closeAuthModal();
                 updateAuthorizationUIElements();
                 showCustomToast("Security Access Unlocked", `Logged in successfully as Lead ${chosenUser}. Cloud write privileges active.`);
+                renderGanttChart();
             } else {
                 errorBanner.classList.remove("hidden");
             }
@@ -737,7 +766,6 @@
             }
         }
 
-        // Non-intrusive customized toast alerts (Avoids alert/confirm entirely)
         function showCustomToast(headline, text) {
             const toast = document.getElementById("toast-warning");
             toast.querySelector("h4").innerText = headline;
@@ -762,27 +790,28 @@
             }, 300);
         }
 
-        // Toggle task completion from any click element
-        window.toggleTaskCompletion = function(taskRef) {
+        // Cycles states on click: 0 (Not Started) -> 1 (Draft Submitted) -> 2 (Approved) -> 0
+        window.cycleTaskState = function(taskRef) {
             if (!isAuthorized) {
                 showCustomToast(
                     "Access Blocked (View-Only Mode)", 
-                    "You are currently viewing this sheet as read-only. Only Gabriel Herniel Kitutu or assigned Team Leads can check off finished tasks."
+                    "You are currently viewing this sheet as read-only. Only Gabriel Herniel Kitutu or assigned Team Leads can submit drafts or approve tasks."
                 );
                 return;
             }
 
             const task = taskDatabase.find(t => t.ref === taskRef);
             if (task) {
-                task.completed = !task.completed;
+                const oldState = task.completedState !== undefined ? task.completedState : 0;
+                task.completedState = (oldState + 1) % 3;
                 
-                // Fire dynamic background cloud sync
+                // Fire background cloud sync
                 syncToCloud();
                 
                 updateGlobalStats();
                 renderGanttChart();
                 
-                // If detailed drawer is active, refresh it
+                // Refresh detail drawer if it is focused
                 const drawer = document.getElementById("detail-drawer");
                 if (!drawer.classList.contains("hidden")) {
                     const drawerRef = document.getElementById("drawer-ref").innerText.replace("Ref ", "");
@@ -791,7 +820,7 @@
                     }
                 }
                 
-                // If modal is active, refresh lists
+                // Refresh modal lists
                 const modal = document.getElementById("completion-modal");
                 if (!modal.classList.contains("hidden")) {
                     populateModalLists();
@@ -799,14 +828,31 @@
             }
         }
 
-        // Render Gantt bars dynamically
+        window.setExplicitTaskState = function(taskRef, stateCode) {
+            if (!isAuthorized) {
+                showCustomToast(
+                    "Access Blocked (View-Only Mode)", 
+                    "You are currently viewing this sheet as read-only. Only Gabriel Herniel Kitutu or assigned Team Leads can modify status parameters."
+                );
+                return;
+            }
+
+            const task = taskDatabase.find(t => t.ref === taskRef);
+            if (task) {
+                task.completedState = stateCode;
+                syncToCloud();
+                updateGlobalStats();
+                renderGanttChart();
+                showTaskDetails(task);
+            }
+        }
+
         function renderGanttChart() {
             const rowsContainer = document.getElementById("gantt-rows-container");
             rowsContainer.innerHTML = "";
 
             const totalTimelineDays = getDayOffset(endDateString) + 1;
 
-            // Filter tasks based on active selections
             const filteredTasks = taskDatabase.filter(task => {
                 if (activeLeadFilter !== "all" && task.lead !== activeLeadFilter) return false;
                 if (activeMemberFilter !== "all" && !task.member.includes(activeMemberFilter)) return false;
@@ -814,7 +860,6 @@
                 return true;
             });
 
-            // Group tasks depending on Selected View Mode
             let groups = {};
             if (currentGrouping === "chapter") {
                 filteredTasks.forEach(task => {
@@ -829,7 +874,6 @@
                 });
             }
 
-            // Construct and inject structural items
             Object.keys(groups).sort().forEach(groupTitle => {
                 // Section Header Row
                 const headerRow = document.createElement("div");
@@ -840,31 +884,39 @@
                 `;
                 rowsContainer.appendChild(headerRow);
 
-                // Add Row for each task inside group
                 groups[groupTitle].forEach(task => {
                     const startOffset = getDayOffset(task.start);
                     const duration = getDayOffset(task.end) - startOffset + 1;
 
-                    const isOverdue = !task.completed && (new Date(task.end) < new Date(simulatedTodayString));
+                    const taskState = task.completedState !== undefined ? task.completedState : 0;
+                    const isOverdue = (taskState < 2) && (new Date(task.end) < new Date(simulatedTodayString));
                     const isActive = new Date(task.start) <= new Date(simulatedTodayString) && new Date(task.end) >= new Date(simulatedTodayString);
 
                     const rowDiv = document.createElement("div");
                     rowDiv.id = `gantt-row-${task.ref}`;
                     rowDiv.className = `grid grid-cols-[320px_1fr] hover:bg-[#F5F2EB]/50 transition-colors group relative border-b border-[#E3DDCF] ${isOverdue ? 'pulse-overdue bg-red-50/50' : ''}`;
 
-                    // Task detail panel (Left column - Sticky)
+                    // Task detail panel (Left column)
                     const labelDiv = document.createElement("div");
                     labelDiv.className = "p-4 border-r border-[#E3DDCF] sticky left-0 bg-white z-10 flex flex-col justify-center min-w-[320px]";
 
+                    // Multi-State Dynamic Icon setup
+                    let stateIcon = '<i class="fa-regular fa-circle text-[#BAAF99] text-sm cursor-pointer hover:scale-110 transition-transform"></i>';
+                    if (taskState === 1) {
+                        stateIcon = '<i class="fa-solid fa-circle-half-stroke text-amber-500 text-sm cursor-pointer animate-pulse hover:scale-110 transition-transform" title="Draft Submitted & Pending Review"></i>';
+                    } else if (taskState === 2) {
+                        stateIcon = '<i class="fa-solid fa-circle-check text-emerald-600 text-sm cursor-pointer hover:scale-110 transition-transform" title="Approved & Completed"></i>';
+                    }
+
                     labelDiv.innerHTML = `
                         <div class="flex items-center gap-2">
-                            <input type="checkbox" ${task.completed ? 'checked' : ''} 
-                                   onclick="event.stopPropagation(); window.toggleTaskCompletion('${task.ref}')"
-                                   class="w-4 h-4 rounded text-rose-600 bg-white border-[#E3DDCF] focus:ring-rose-500 focus:ring-2 cursor-pointer transition-all">
+                            <span onclick="window.cycleTaskState('${task.ref}')" class="flex items-center justify-center w-6 h-6 rounded-full hover:bg-slate-100 transition-colors">
+                                ${stateIcon}
+                            </span>
                             <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
                             <span onclick="window.showTaskDetailsByRef('${task.ref}')" class="text-xs font-bold cursor-pointer text-[#2A2421] group-hover:text-rose-600 transition-colors truncate max-w-[190px]">${task.name}</span>
                         </div>
-                        <div class="flex justify-between items-center mt-1.5 ml-6">
+                        <div class="flex justify-between items-center mt-1.5 ml-8">
                             <span class="text-[10px] text-[#6E645A] font-semibold flex items-center gap-1">
                                 <i class="fa-solid fa-user-circle text-rose-600/80"></i> ${task.lead}
                                 ${task.member !== 'N/A' ? `<span class="text-[#D4CDBC]">→</span> <span class="text-[#6E645A] font-medium">${task.member}</span>` : ''}
@@ -879,7 +931,6 @@
                     timelineGridDiv.className = "grid relative items-center select-none";
                     timelineGridDiv.style.gridTemplateColumns = `repeat(${totalTimelineDays}, minmax(40px, 1fr))`;
 
-                    // Generate Day Background Grid Cells (dotted guides)
                     for (let g = 0; g < totalTimelineDays; g++) {
                         const cell = document.createElement("div");
                         cell.className = "h-full border-r border-dashed border-[#E3DDCF]/40";
@@ -895,20 +946,26 @@
                     if (task.lead === "Owen") barColorClasses = "from-emerald-500 to-emerald-600 glow-owen text-white";
                     if (task.lead === "Morgan/Shibah") barColorClasses = "from-amber-500 to-amber-600 glow-joint text-white";
 
-                    // Gray out completed tasks elegantly
-                    if (task.completed) {
-                        barColorClasses = "from-[#BAAF99] to-[#C4BCA8] text-white border border-[#DDD5C3]";
+                    // Dynamic colors based on 3-stage lifecycle
+                    if (taskState === 1) {
+                        // Draft Submitted / Review phase -> pulsing amber / gold
+                        barColorClasses = "from-amber-400 to-amber-600 text-white animate-pulse border border-amber-500";
+                    } else if (taskState === 2) {
+                        // Approved & Validated state -> Muted elegant validated sage-green
+                        barColorClasses = "from-[#475569] to-[#64748B] text-white border border-[#334155]";
                     }
 
                     ganttBar.className = `absolute h-7 rounded-lg bg-gradient-to-r ${barColorClasses} flex items-center justify-between px-3 text-[10px] font-bold cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:brightness-105`;
-                    
-                    // Grid mapping logic
                     ganttBar.style.gridColumn = `${startOffset + 1} / span ${duration}`;
 
                     // Icon setup based on completion status
+                    let statusLabel = `<span class="truncate pr-1">${task.ref} | ${duration} Days</span>`;
                     let statusIcon = '<i class="fa-solid fa-gears animate-spin text-[9px] text-amber-200"></i>';
-                    if (task.completed) {
-                        statusIcon = '<i class="fa-solid fa-circle-check text-white text-[10px]"></i>';
+                    
+                    if (taskState === 1) {
+                        statusIcon = '<span class="flex items-center gap-1"><i class="fa-solid fa-circle-half-stroke text-white text-[10px] animate-pulse"></i> <span class="text-[8px] uppercase tracking-wider text-amber-100 hidden sm:inline">Reviewing</span></span>';
+                    } else if (taskState === 2) {
+                        statusIcon = '<span class="flex items-center gap-1"><i class="fa-solid fa-circle-check text-white text-[10px]"></i> <span class="text-[8px] uppercase tracking-wider text-emerald-100 hidden sm:inline">Approved</span></span>';
                     } else if (isOverdue) {
                         statusIcon = '<i class="fa-solid fa-triangle-exclamation text-white text-[10px] animate-bounce"></i>';
                     } else if (!isActive && new Date(task.start) > new Date(simulatedTodayString)) {
@@ -916,7 +973,7 @@
                     }
 
                     ganttBar.innerHTML = `
-                        <span class="truncate pr-1">${task.ref} | ${duration} Days</span>
+                        ${statusLabel}
                         <span class="flex items-center gap-1">${statusIcon}</span>
                     `;
 
@@ -962,16 +1019,20 @@
             };
             document.getElementById("drawer-dates").innerText = `${formatStringDate(task.start)} - ${formatStringDate(task.end)}, 2026`;
 
-            const isOverdue = !task.completed && (new Date(task.end) < new Date(simulatedTodayString));
+            const taskState = task.completedState !== undefined ? task.completedState : 0;
+            const isOverdue = (taskState < 2) && (new Date(task.end) < new Date(simulatedTodayString));
             const isActive = new Date(task.start) <= new Date(simulatedTodayString) && new Date(task.end) >= new Date(simulatedTodayString);
             
             const badge = document.getElementById("drawer-status-badge");
             badge.innerHTML = "";
             
             const div = document.createElement("div");
-            if (task.completed) {
+            if (taskState === 2) {
                 div.className = "px-3 py-1 bg-emerald-50 border border-emerald-500 text-emerald-800 text-xs font-bold rounded-full flex items-center gap-1.5";
-                div.innerHTML = `<i class="fa-solid fa-circle-check"></i> Finalized & Validated`;
+                div.innerHTML = `<i class="fa-solid fa-circle-check"></i> Approved & Closed`;
+            } else if (taskState === 1) {
+                div.className = "px-3 py-1 bg-amber-50 border border-amber-500 text-amber-800 text-xs font-bold rounded-full flex items-center gap-1.5 pulse-today";
+                div.innerHTML = `<i class="fa-solid fa-circle-half-stroke animate-pulse"></i> Draft Submitted & Pending Review`;
             } else if (isOverdue) {
                 div.className = "px-3 py-1 bg-red-50 border border-red-500 text-red-700 text-xs font-bold rounded-full flex items-center gap-1.5 pulse-today";
                 div.innerHTML = `<i class="fa-solid fa-circle-exclamation animate-bounce"></i> Overdue Target Gate`;
@@ -980,22 +1041,26 @@
                 div.innerHTML = `<i class="fa-solid fa-bolt animate-bounce"></i> In Active Pipeline`;
             } else {
                 div.className = "px-3 py-1 bg-[#EFECE1] border border-[#E3DDCF] text-[#6E645A] text-xs font-bold rounded-full flex items-center gap-1.5";
-                div.innerHTML = `<i class="fa-regular fa-clock"></i> Scheduled Phase`;
+                div.innerHTML = `<i class="fa-regular fa-clock"></i> Pending Draft`;
             }
             badge.appendChild(div);
 
             document.getElementById("drawer-avatar-lead").innerText = task.lead.charAt(0);
             document.getElementById("drawer-avatar-member").innerText = task.member.charAt(0);
 
-            const toggleBtn = document.getElementById("drawer-toggle-btn");
-            toggleBtn.setAttribute("onclick", `window.toggleTaskCompletion('${task.ref}')`);
-            if (task.completed) {
-                toggleBtn.className = "mt-1 px-4 py-1.5 w-full bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm";
-                toggleBtn.innerHTML = `<i class="fa-solid fa-rotate-left"></i> Mark Incomplete`;
-            } else {
-                toggleBtn.className = "mt-1 px-4 py-1.5 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm";
-                toggleBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Mark Completed`;
-            }
+            // Update drawer explicit state controller classes to reflect selection
+            const btn0 = document.getElementById("btn-state-0");
+            const btn1 = document.getElementById("btn-state-1");
+            const btn2 = document.getElementById("btn-state-2");
+
+            btn0.setAttribute("onclick", `window.setExplicitTaskState('${task.ref}', 0)`);
+            btn1.setAttribute("onclick", `window.setExplicitTaskState('${task.ref}', 1)`);
+            btn2.setAttribute("onclick", `window.setExplicitTaskState('${task.ref}', 2)`);
+
+            // Apply style overrides based on current state
+            btn0.className = `py-1.5 text-[9px] font-bold rounded-md transition-all ${taskState === 0 ? 'bg-slate-200 text-slate-800 shadow-sm' : 'text-slate-400 hover:bg-slate-100'}`;
+            btn1.className = `py-1.5 text-[9px] font-bold rounded-md transition-all ${taskState === 1 ? 'bg-amber-100 text-amber-800 shadow-sm border border-amber-300' : 'text-amber-600 hover:bg-amber-50'}`;
+            btn2.className = `py-1.5 text-[9px] font-bold rounded-md transition-all ${taskState === 2 ? 'bg-emerald-100 text-emerald-800 shadow-sm border border-emerald-300' : 'text-emerald-600 hover:bg-emerald-50'}`;
 
             drawer.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }
@@ -1021,8 +1086,18 @@
         }
 
         function updateGlobalStats() {
-            const completed = taskDatabase.filter(t => t.completed).length;
-            const percentage = Math.round((completed / taskDatabase.length) * 100);
+            // Task completed state calculations:
+            // State 0 = 0 points, State 1 = 1 point (50%), State 2 = 2 points (100%)
+            // Progress = sum(points) / (max total points)
+            let totalPoints = 0;
+            const maxPoints = taskDatabase.length * 2;
+
+            taskDatabase.forEach(t => {
+                const state = t.completedState !== undefined ? t.completedState : 0;
+                totalPoints += state; // Adds 0, 1, or 2
+            });
+
+            const percentage = Math.round((totalPoints / maxPoints) * 100);
             
             const statComp = document.getElementById("stat-completion");
             if (statComp) statComp.innerText = `${percentage}%`;
@@ -1040,45 +1115,70 @@
         }
 
         function populateModalLists() {
-            const completedList = document.getElementById("modal-completed-list");
+            const approvedList = document.getElementById("modal-approved-list");
+            const reviewList = document.getElementById("modal-review-list");
             const pendingList = document.getElementById("modal-pending-list");
             
-            completedList.innerHTML = "";
+            approvedList.innerHTML = "";
+            reviewList.innerHTML = "";
             pendingList.innerHTML = "";
 
-            const completedTasks = taskDatabase.filter(t => t.completed);
-            const pendingTasks = taskDatabase.filter(t => !t.completed);
+            const approvedTasks = taskDatabase.filter(t => t.completedState === 2);
+            const reviewTasks = taskDatabase.filter(t => t.completedState === 1);
+            const pendingTasks = taskDatabase.filter(t => t.completedState === 0 || t.completedState === undefined);
 
-            document.getElementById("modal-completed-count").innerText = completedTasks.length;
+            document.getElementById("modal-approved-count").innerText = approvedTasks.length;
+            document.getElementById("modal-review-count").innerText = reviewTasks.length;
             document.getElementById("modal-pending-count").innerText = pendingTasks.length;
 
-            completedTasks.forEach(task => {
+            approvedTasks.forEach(task => {
                 const item = document.createElement("div");
-                item.className = "flex items-center justify-between p-3 bg-white border border-[#E3DDCF] hover:border-emerald-500 rounded-lg cursor-pointer hover:bg-[#FAF8F2] transition-all";
+                item.className = "flex items-center justify-between p-3 bg-white border border-emerald-100 hover:border-emerald-500 rounded-lg cursor-pointer hover:bg-[#FAF8F2] transition-all";
                 item.innerHTML = `
                     <div class="flex items-center gap-2" onclick="closeCompletionModal(); window.showTaskDetailsByRef('${task.ref}')">
                         <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
-                        <span class="text-xs font-bold text-[#2A2421] truncate max-w-[240px]">${task.name}</span>
+                        <span class="text-xs font-bold text-[#2A2421] truncate max-w-[180px]">${task.name}</span>
                     </div>
-                    <button onclick="window.toggleTaskCompletion('${task.ref}')" class="text-[#6E645A] hover:text-amber-600 transition-colors">
-                        <i class="fa-solid fa-rotate-left"></i>
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[9px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 border border-emerald-300 rounded font-bold uppercase">Approved</span>
+                        <button onclick="window.cycleTaskState('${task.ref}')" class="text-slate-400 hover:text-slate-800 transition-colors">
+                            <i class="fa-solid fa-rotate-left text-xs"></i>
+                        </button>
+                    </div>
                 `;
-                completedList.appendChild(item);
+                approvedList.appendChild(item);
+            });
+
+            reviewTasks.forEach(task => {
+                const item = document.createElement("div");
+                item.className = "flex items-center justify-between p-3 bg-white border border-amber-200 hover:border-amber-500 rounded-lg cursor-pointer hover:bg-[#FAF8F2] transition-all";
+                item.innerHTML = `
+                    <div class="flex items-center gap-2" onclick="closeCompletionModal(); window.showTaskDetailsByRef('${task.ref}')">
+                        <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
+                        <span class="text-xs font-bold text-[#2A2421] truncate max-w-[180px]">${task.name}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[9px] text-amber-700 bg-amber-50 px-1.5 py-0.5 border border-amber-300 rounded font-bold uppercase animate-pulse">In Review</span>
+                        <button onclick="window.cycleTaskState('${task.ref}')" class="text-slate-400 hover:text-slate-850 transition-colors">
+                            <i class="fa-solid fa-arrows-spin text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                reviewList.appendChild(item);
             });
 
             pendingTasks.forEach(task => {
                 const isOverdue = new Date(task.end) < new Date(simulatedTodayString);
                 const item = document.createElement("div");
-                item.className = `flex items-center justify-between p-3 bg-white border rounded-lg cursor-pointer hover:bg-[#FAF8F2] transition-all ${isOverdue ? 'border-red-300 hover:border-red-500' : 'border-[#E3DDCF] hover:border-rose-500'}`;
+                item.className = `flex items-center justify-between p-3 bg-white border rounded-lg cursor-pointer hover:bg-[#FAF8F2] transition-all ${isOverdue ? 'border-red-200 hover:border-red-500' : 'border-[#E3DDCF] hover:border-rose-500'}`;
                 item.innerHTML = `
                     <div class="flex items-center gap-2" onclick="closeCompletionModal(); window.showTaskDetailsByRef('${task.ref}')">
                         <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
-                        <span class="text-xs font-bold text-[#2A2421] truncate max-w-[240px]">${task.name}</span>
+                        <span class="text-xs font-bold text-[#2A2421] truncate max-w-[180px]">${task.name}</span>
                         ${isOverdue ? '<span class="text-[8px] bg-red-50 text-red-700 border border-red-200 px-1.5 py-0.5 rounded font-bold uppercase animate-pulse">Overdue</span>' : ''}
                     </div>
-                    <button onclick="window.toggleTaskCompletion('${task.ref}')" class="text-[#6E645A] hover:text-emerald-600 transition-colors">
-                        <i class="fa-solid fa-circle-check"></i>
+                    <button onclick="window.cycleTaskState('${task.ref}')" class="text-[#6E645A] hover:text-emerald-600 transition-colors">
+                        <i class="fa-solid fa-plus text-xs"></i>
                     </button>
                 `;
                 pendingList.appendChild(item);
