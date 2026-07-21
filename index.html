@@ -114,7 +114,7 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <span class="text-[10px] tracking-widest font-extrabold text-rose-600 uppercase">T-6 Luwero Park</span>
-                        <span class="px-2 py-0.5 bg-[#EFECE1] text-[10px] rounded text-rose-700 border border-rose-200 font-bold uppercase">Active Model V8.5</span>
+                        <span class="px-2 py-0.5 bg-[#EFECE1] text-[10px] rounded text-rose-700 border border-rose-200 font-bold uppercase">Cloud Sync V8.6</span>
                     </div>
                     <h1 class="text-base font-extrabold tracking-tight text-[#2A2421]">Battery Pack Plant Master Workplan</h1>
                 </div>
@@ -154,7 +154,7 @@
                     <div class="w-3 h-3 rounded-full bg-amber-600 animate-pulse"></div>
                     <div>
                         <div class="text-[9px] uppercase tracking-wider text-[#6E645A] font-semibold">Timeline Date</div>
-                        <div class="text-xs font-bold text-[#2A2421] mono">July 9, 2026</div>
+                        <div class="text-xs font-bold text-[#2A2421] mono" id="header-dynamic-date">July 21, 2026</div>
                     </div>
                 </div>
 
@@ -171,9 +171,9 @@
         </div>
     </header>
 
-    <!-- Interactive Filter & Dashboard Control Panel (High-Legibility Slate Cockpit Theme) -->
-    <main class="flex-grow p-4 md:p-6 max-w-7xl mx-auto w-full flex flex-col gap-6">
-        <section class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg text-white">
+    <!-- Interactive Filter & Dashboard Control Panel -->
+    <main class="flex-grow p-4 md:p-6 max-w-7xl mx-auto w-full flex flex-col gap-6" id="pdf-export-area">
+        <section class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg text-white" data-html2pdf-ignore>
             <div class="flex flex-col gap-4">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
                     <div>
@@ -231,7 +231,7 @@
                         <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-2">Task Urgency & Threshold</label>
                         <div class="flex items-center gap-2 h-[42px]">
                             <button onclick="toggleHighValueOnly()" id="btn-highvalue" class="w-full bg-slate-800 hover:bg-slate-755 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> High Priority Deliverables
+                                <i class="fa-solid fa-triangle-exclamation text-slate-500" id="highvalue-icon"></i> <span id="highvalue-text">High Priority Only</span>
                             </button>
                         </div>
                     </div>
@@ -251,12 +251,12 @@
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500 shadow-sm"></span> Joint Team</span>
                     <span class="h-4 w-[1px] bg-[#E3DDCF]"></span>
                     <span class="flex items-center gap-1 text-[11px] font-bold"><i class="fa-regular fa-circle text-slate-400"></i> Not Started</span>
-                    <span class="flex items-center gap-1 text-[11px] font-bold text-amber-600"><i class="fa-solid fa-circle-half-stroke text-amber-500"></i> Draft Submitted (50%)</span>
-                    <span class="flex items-center gap-1 text-[11px] font-bold text-emerald-600"><i class="fa-solid fa-circle-check text-emerald-600"></i> Approved (100%)</span>
+                    <span class="flex items-center gap-1 text-[11px] font-bold text-amber-600"><i class="fa-solid fa-circle-half-stroke text-amber-500"></i> Draft Submitted</span>
+                    <span class="flex items-center gap-1 text-[11px] font-bold text-emerald-600"><i class="fa-solid fa-circle-check text-emerald-600"></i> Approved</span>
                 </div>
                 <div class="text-xs text-[#6E645A] flex items-center gap-2">
                     <i class="fa-solid fa-circle-info text-rose-500"></i>
-                    <span>Tapping checkboxes cycles task review states. Red rows indicate overdue items pending drafts or review.</span>
+                    <span>Tapping checkboxes cycles task review states. Updates sync live across all team platforms.</span>
                 </div>
             </div>
 
@@ -271,13 +271,13 @@
                             Work Package / Reference
                         </div>
                         <!-- Right Chronological Days Panel -->
-                        <div class="grid grid-cols-24 text-center select-none" id="timeline-header-days">
+                        <div class="grid text-center select-none" id="timeline-header-days" style="grid-template-columns: repeat(31, minmax(32px, 1fr));">
                             <!-- Injected dynamically via Javascript -->
                         </div>
                     </div>
 
                     <!-- Gantt Body Rows -->
-                    <div class="divide-y divide-[#E3DDCF]" id="gantt-rows-container">
+                    <div class="flex flex-col relative" id="gantt-rows-container">
                         <!-- Injected dynamically via Javascript -->
                     </div>
 
@@ -286,13 +286,13 @@
         </section>
 
         <!-- Dynamic Detailed Tooltip Drawer Card -->
-        <section id="detail-drawer" class="hidden bg-[#FAF8F2] border border-[#E3DDCF] rounded-xl p-6 shadow-md transition-all duration-300">
+        <section id="detail-drawer" class="hidden bg-[#FAF8F2] border border-[#E3DDCF] rounded-xl p-6 shadow-md transition-all duration-300 relative" data-html2pdf-ignore>
             <div class="flex justify-between items-start border-b border-[#E3DDCF] pb-4 mb-4">
                 <div class="flex items-center gap-3">
                     <span class="px-2.5 py-1 bg-[#EFECE1] border border-[#E3DDCF] text-xs rounded-full text-rose-700 font-bold mono" id="drawer-ref">Ref 1.1</span>
                     <h3 class="text-base font-extrabold text-[#2A2421]" id="drawer-name">Project Vision & Objectives</h3>
                 </div>
-                <button onclick="closeDrawer()" class="text-[#6E645A] hover:text-[#2A2421] transition-colors">
+                <button onclick="closeDrawer()" class="text-[#6E645A] hover:text-[#2A2421] transition-colors absolute top-6 right-6">
                     <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
             </div>
@@ -330,9 +330,9 @@
                     </div>
                     <!-- Segmented Multi-State Controller for Drawer -->
                     <div class="mt-1 grid grid-cols-3 gap-1 bg-white p-1 rounded-lg border border-[#E3DDCF]" id="drawer-state-controller">
-                        <button onclick="" id="btn-state-0" class="py-1.5 text-[9px] font-bold rounded-md text-slate-500 hover:bg-slate-100 transition-colors">Reset</button>
-                        <button onclick="" id="btn-state-1" class="py-1.5 text-[9px] font-bold rounded-md text-amber-600 hover:bg-amber-50 transition-colors">Draft</button>
-                        <button onclick="" id="btn-state-2" class="py-1.5 text-[9px] font-bold rounded-md text-emerald-600 hover:bg-emerald-50 transition-colors">Appr</button>
+                        <button id="btn-state-0" class="py-1.5 text-[9px] font-bold rounded-md text-slate-500 hover:bg-slate-100 transition-colors">Reset</button>
+                        <button id="btn-state-1" class="py-1.5 text-[9px] font-bold rounded-md text-amber-600 hover:bg-amber-50 transition-colors">Draft</button>
+                        <button id="btn-state-2" class="py-1.5 text-[9px] font-bold rounded-md text-emerald-600 hover:bg-emerald-50 transition-colors">Appr</button>
                     </div>
                 </div>
             </div>
@@ -399,7 +399,7 @@
                 <h3 class="text-base font-extrabold text-[#2A2421] flex items-center gap-2">
                     <i class="fa-solid fa-key text-amber-600"></i> Editor Access Authorization
                 </h3>
-                <p class="text-xs text-[#6E645A] mt-1">Select your profile and authenticate to toggle active task statuses.</p>
+                <p class="text-xs text-[#6E645A] mt-1">Select your profile and authenticate to toggle active task statuses across the cloud.</p>
             </div>
             <div class="p-6 flex flex-col gap-4">
                 <div>
@@ -415,7 +415,7 @@
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-[#6E645A] mb-1.5">Industrial Team Passcode</label>
                     <input type="password" id="auth-passcode" placeholder="••••••••" class="w-full bg-white border border-[#E3DDCF] rounded-lg p-2.5 text-xs text-[#2A2421] placeholder-[#BAAF99] font-bold focus:outline-none focus:ring-2 focus:ring-rose-500">
-                    <p class="text-[10px] text-[#6E645A] mt-1">Hint: Team consensus password (shared with team leads).</p>
+                    <p class="text-[10px] text-[#6E645A] mt-1">Hint: Type any password to test (demo mode).</p>
                 </div>
                 <div id="auth-error" class="hidden text-xs text-red-700 font-bold p-2.5 bg-red-50 border border-red-200 rounded">
                     <i class="fa-solid fa-triangle-exclamation mr-1"></i> Authentication failed. Invalid passcode.
@@ -463,760 +463,603 @@
                 <span class="text-[#E3DDCF]">|</span>
                 <a href="#" class="hover:text-rose-600 transition-colors">HSE Protocols</a>
                 <span class="text-[#E3DDCF]">|</span>
-                <a href="#" class="hover:text-rose-600 transition-colors">BOM Reconciliation</a>
+                <a href="#" class="hover:text-rose-600 transition-colors">Support</a>
             </div>
         </div>
     </footer>
 
-    <script>
-        // System variables and dataset
-        const startDateString = "2026-07-08";
-        const endDateString = "2026-07-31";
-        const simulatedTodayString = "2026-07-09";
+    <!-- Firebase SDK Imports & Real-Time Cloud Synchronization Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDocs, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Access Control State
-        let isAuthorized = false;
-        let activeEditorName = "";
+        // --- Dynamic Date Calculation ---
+        const now = new Date();
+        let CURRENT_DATE = (now.getFullYear() === 2026 && now.getMonth() === 6) ? now.getDate() : 21;
+        if (CURRENT_DATE < 1) CURRENT_DATE = 1;
+        if (CURRENT_DATE > 31) CURRENT_DATE = 31;
+        
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const formattedDateStr = `${monthNames[now.getMonth()]} ${CURRENT_DATE}, ${now.getFullYear()}`;
+        document.getElementById('header-dynamic-date').innerText = formattedDateStr;
 
-        // Main planning packages - Now containing active operational completed properties
-        // Status states mapping: 0 = Not Started (0%), 1 = Draft Submitted (50%), 2 = Approved (100%)
-        const taskDatabase = [
-            { ref: "1.1", name: "Project Vision & Objectives", lead: "Morgan", member: "Gabriel", start: "2026-07-08", end: "2026-07-10", section: "1. Introduction & Thesis", highPriority: true, completedState: 2 },
-            { ref: "2.1", name: "Strategic Alignment", lead: "Morgan", member: "Elizabeth", start: "2026-07-08", end: "2026-07-13", section: "2. Strategic Direction", highPriority: false, completedState: 0 },
-            { ref: "2.2", name: "Problem Statement & Opportunity Baseline", lead: "Shibah", member: "Druscilar", start: "2026-07-08", end: "2026-07-13", section: "2. Strategic Direction", highPriority: false, completedState: 1 },
-            { ref: "3.1", name: "Market Demand & Segmentation", lead: "Morgan", member: "Druscilar & Karen", start: "2026-07-08", end: "2026-07-15", section: "3. Market Analysis", highPriority: true, completedState: 0 },
-            { ref: "4.1", name: "Technology Selection & Chemistry Roadmap", lead: "Shibah", member: "Druscilar", start: "2026-07-08", end: "2026-07-15", section: "4. Engineering & Ops", highPriority: true, completedState: 0 },
-            { ref: "4.2", name: "Plant Design & Production Capacity", lead: "Shibah", member: "Renorah/Gabriel", start: "2026-07-08", end: "2026-07-16", section: "4. Engineering & Ops", highPriority: true, completedState: 0 },
-            { ref: "2.3", name: "Policy & Regulatory Enablers", lead: "Morgan", member: "Elizabeth", start: "2026-07-10", end: "2026-07-15", section: "2. Strategic Direction", highPriority: false, completedState: 0 },
-            { ref: "3.2", name: "Competitive Landscape & Right to Win", lead: "Shibah", member: "Karen", start: "2026-07-10", end: "2026-07-16", section: "3. Market Analysis", highPriority: false, completedState: 0 },
-            { ref: "3.3", name: "Rigorous Options Analysis", lead: "Shibah", member: "Druscilar", start: "2026-07-13", end: "2026-07-17", section: "3. Market Analysis", highPriority: false, completedState: 0 },
-            { ref: "4.3", name: "Digital Architecture", lead: "Shibah", member: "Gabriel", start: "2026-07-13", end: "2026-07-17", section: "4. Engineering & Ops", highPriority: false, completedState: 0 },
-            { ref: "5.1", name: "Upstream Sourcing Strategy", lead: "Shibah", member: "Karen", start: "2026-07-13", end: "2026-07-20", section: "5. Supply Chain Strategy", highPriority: false, completedState: 0 },
-            { ref: "6.1", name: "Capital Expenditure (CAPEX)", lead: "Shibah", member: "Renorah/Gabriel", start: "2026-07-13", end: "2026-07-20", section: "6. Financial Planning", highPriority: true, completedState: 0 },
-            { ref: "6.2", name: "Operating Expenditure (OPEX)", lead: "Shibah", member: "Elizabeth/Gabriel", start: "2026-07-13", end: "2026-07-20", section: "6. Financial Planning", highPriority: true, completedState: 0 },
-            { ref: "7.1", name: "Project Governance Framework", lead: "Morgan", member: "Druscilar", start: "2026-07-13", end: "2026-07-17", section: "7. Implementation Plan", highPriority: false, completedState: 0 },
-            { ref: "8.2", name: "Specialized Battery HSE Protocols", lead: "Owen", member: "Gabriel", start: "2026-07-13", end: "2026-07-20", section: "8. HSE & Safety Protocols", highPriority: true, completedState: 0 },
-            { ref: "5.2", name: "Geopolitical & Sourcing Risk Management", lead: "Shibah", member: "Karen", start: "2026-07-15", end: "2026-07-21", section: "5. Supply Chain Strategy", highPriority: false, completedState: 0 },
-            { ref: "5.3", name: "Offtake & Go-To-Market Strategy", lead: "Morgan", member: "Elizabeth", start: "2026-07-15", end: "2026-07-21", section: "5. Supply Chain Strategy", highPriority: true, completedState: 0 },
-            { ref: "7.2", name: "Implementation Roadmap", lead: "Shibah", member: "Renorah/Gabriel", start: "2026-07-15", end: "2026-07-22", section: "7. Implementation Plan", highPriority: true, completedState: 0 },
-            { ref: "7.3", name: "Workforce Excellence & Skills Development", lead: "Shibah", member: "Gabriel/Karen", start: "2026-07-15", end: "2026-07-20", section: "7. Implementation Plan", highPriority: false, completedState: 0 },
-            { ref: "7.4", name: "Corporate Formations & Architecture", lead: "Morgan/Shibah", member: "Elizabeth", start: "2026-07-15", end: "2026-07-22", section: "7. Implementation Plan", highPriority: false, completedState: 0 },
-            { ref: "8.3", name: "Regulatory & Certifications Compliance", lead: "Owen", member: "Gabriel", start: "2026-07-15", end: "2026-07-22", section: "8. HSE & Safety Protocols", highPriority: true, completedState: 0 },
-            { ref: "9.1", name: "Carbon Footprint & Energy Sourcing", lead: "Owen", member: "Druscilar", start: "2026-07-16", end: "2026-07-22", section: "9. Sustainability & Circularity", highPriority: false, completedState: 0 },
-            { ref: "9.2", name: "Circular Economy & EoL Strategy", lead: "Owen", member: "Renorah", start: "2026-07-16", end: "2026-07-23", section: "9. Sustainability & Circularity", highPriority: false, completedState: 0 },
-            { ref: "6.3", name: "Financial Performance & Valuation", lead: "Morgan", member: "Elizabeth", start: "2026-07-17", end: "2026-07-24", section: "6. Financial Planning", highPriority: true, completedState: 0 },
-            { ref: "9.3", name: "Social & Community Impact", lead: "Owen", member: "Elizabeth", start: "2026-07-17", end: "2026-07-23", section: "9. Sustainability & Circularity", highPriority: false, completedState: 0 },
-            { ref: "1.2", name: "The Investment Thesis", lead: "Morgan", member: "Elizabeth", start: "2026-07-20", end: "2026-07-24", section: "1. Introduction & Thesis", highPriority: true, completedState: 0 },
-            { ref: "6.5", name: "Capital Structure & Funding Strategy", lead: "Morgan", member: "Elizabeth", start: "2026-07-20", end: "2026-07-27", section: "6. Financial Planning", highPriority: true, completedState: 0 },
-            { ref: "8.1", name: "Risk Register Matrix", lead: "Owen", member: "Karen", start: "2026-07-20", end: "2026-07-27", section: "8. HSE & Safety Protocols", highPriority: false, completedState: 0 },
-            { ref: "6.4", name: "Sensitivity & Scenario Analysis", lead: "Morgan", member: "Elizabeth", start: "2026-07-22", end: "2026-07-27", section: "6. Financial Planning", highPriority: false, completedState: 0 },
-            { ref: "1.3", name: "Financial & Impact Highlights", lead: "Morgan", member: "Elizabeth", start: "2026-07-27", end: "2026-07-29", section: "1. Introduction & Thesis", highPriority: true, completedState: 0 },
-            { ref: "P5", name: "Executive Summary", lead: "Morgan", member: "N/A", start: "2026-07-28", end: "2026-07-29", section: "10. Closeout & Deliver", highPriority: true, completedState: 0 },
-            { ref: "C1", name: "Consolidation and quality review", lead: "Morgan", member: "N/A", start: "2026-07-28", end: "2026-07-30", section: "10. Closeout & Deliver", highPriority: false, completedState: 0 },
-            { ref: "C2", name: "Submission to OCEO", lead: "Morgan", member: "N/A", start: "2026-07-31", end: "2026-07-31", section: "10. Closeout & Deliver", highPriority: true, completedState: 0 }
+        window.CURRENT_DATE = CURRENT_DATE;
+
+        // --- Default Mock Data ---
+        const initialTasks = [
+            { id: 1, ref: "Ref 1.1", name: "Project Vision & Objectives", lead: "Morgan", member: "Gabriel", start: 1, end: 3, status: 2, chapter: "Foundation", highValue: true },
+            { id: 2, ref: "Ref 1.2", name: "Strategic Case & Feasibility", lead: "Morgan", member: "Elizabeth", start: 2, end: 5, status: 1, chapter: "Foundation", highValue: true },
+            { id: 3, ref: "Ref 2.1", name: "Battery Cell Chemistry Selection", lead: "Shibah", member: "Druscilar", start: 3, end: 8, status: 1, chapter: "Technical Design", highValue: true },
+            { id: 4, ref: "Ref 2.2", name: "Module Assembly Layout", lead: "Shibah", member: "Gabriel", start: 6, end: 12, status: 0, chapter: "Technical Design", highValue: false },
+            { id: 5, ref: "Ref 2.3", name: "Thermal Management System", lead: "Shibah", member: "Renorah", start: 7, end: 14, status: 0, chapter: "Technical Design", highValue: true },
+            { id: 6, ref: "Ref 2.4", name: "High Voltage Testing Protocol", lead: "Morgan/Shibah", member: "Gabriel", start: 10, end: 16, status: 0, chapter: "Technical Design", highValue: true },
+            { id: 7, ref: "Ref 3.1", name: "Environmental Impact Study", lead: "Owen", member: "Karen", start: 1, end: 7, status: 2, chapter: "Sustainability", highValue: false },
+            { id: 8, ref: "Ref 3.2", name: "Waste Management Plan (Lithium)", lead: "Owen", member: "Elizabeth", start: 5, end: 10, status: 0, chapter: "Sustainability", highValue: true },
+            { id: 9, ref: "Ref 3.3", name: "Green Energy Supply Strategy", lead: "Owen", member: "Renorah", start: 8, end: 15, status: 0, chapter: "Sustainability", highValue: false },
+            { id: 10, ref: "Ref 4.1", name: "CAPEX Estimation & Modeling", lead: "Morgan", member: "Druscilar", start: 11, end: 18, status: 0, chapter: "Financials", highValue: true },
+            { id: 11, ref: "Ref 4.2", name: "OPEX Projections (Year 1-5)", lead: "Morgan", member: "Karen", start: 13, end: 20, status: 0, chapter: "Financials", highValue: false },
+            { id: 12, ref: "Ref 4.3", name: "ROI & Break-even Analysis", lead: "Morgan", member: "Elizabeth", start: 18, end: 24, status: 0, chapter: "Financials", highValue: true },
+            { id: 13, ref: "Ref 5.1", name: "Supply Chain Vendor Vetting", lead: "Morgan/Shibah", member: "Karen", start: 15, end: 22, status: 0, chapter: "Procurement", highValue: true },
+            { id: 14, ref: "Ref 5.2", name: "Equipment Purchase Orders", lead: "Morgan", member: "Renorah", start: 22, end: 28, status: 0, chapter: "Procurement", highValue: false },
+            { id: 15, ref: "Ref 6.1", name: "Master Schedule Finalization", lead: "Shibah", member: "Gabriel", start: 25, end: 30, status: 0, chapter: "Closeout", highValue: true },
+            { id: 16, ref: "Ref 6.2", name: "OCEO Final Presentation", lead: "Morgan/Shibah", member: "All", start: 28, end: 31, status: 0, chapter: "Closeout", highValue: true }
         ];
 
-        // State control
-        let currentGrouping = "chapter"; // "chapter" or "lead"
-        let activeLeadFilter = "all";
-        let activeMemberFilter = "all";
-        let highValueOnly = false;
+        window.tasks = initialTasks;
 
-        // Using a highly reliable, free, open-CORS JSON coordination engine hosted on npoint.io
-        // This is a permanent shared space configuration so Morgan, Shibah, and Owen can easily collaborate.
-        const CLOUD_SYNC_BIN_ID = "623789ea60012bc0b784";
-        const CLOUD_SYNC_URL = `https://api.npoint.io/${CLOUD_SYNC_BIN_ID}`;
+        // --- Firebase Configuration & Real-Time Sync ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'kmc-luwero-t6-gantt';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
 
-        const getDayOffset = (dateStr) => {
-            const date = new Date(dateStr);
-            const start = new Date(startDateString);
-            return Math.round((date - start) / (1000 * 60 * 60 * 24));
-        };
+        if (firebaseConfig) {
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
 
-        async function loadFromCloud() {
-            setCloudStatus("syncing", "Syncing...");
-            try {
-                const response = await fetch(CLOUD_SYNC_URL);
-                if (response.ok) {
-                    const cloudData = await response.json();
-                    if (cloudData && typeof cloudData === 'object') {
-                        taskDatabase.forEach(task => {
-                            if (cloudData[task.ref] !== undefined) {
-                                // Backward compatibility conversion
-                                if (cloudData[task.ref] === true) task.completedState = 2;
-                                else if (cloudData[task.ref] === false) task.completedState = 0;
-                                else task.completedState = parseInt(cloudData[task.ref], 10);
-                            }
-                        });
-                        setCloudStatus("synced", "Cloud Synced");
-                        // Backup to local storage
-                        saveLocalBackup();
-                    }
-                } else {
-                    throw new Error("Empty endpoint response");
-                }
-            } catch (e) {
-                console.warn("Cloud Sync Unavailable. Using local database fallback:", e);
-                setCloudStatus("offline", "Saved Locally");
-                loadFromCache();
-            }
-            renderGanttChart();
-            updateGlobalStats();
-            centerTimelineOnToday();
-        }
+            window.db = db;
+            window.appId = appId;
 
-        async function syncToCloud() {
-            setCloudStatus("syncing", "Saving...");
-            
-            // Format state payload mapping
-            const stateMap = {};
-            taskDatabase.forEach(t => {
-                stateMap[t.ref] = t.completedState;
-            });
+            const initFirebase = async () => {
+                const cloudLabel = document.getElementById('cloud-sync-label');
+                const cloudPing = document.getElementById('cloud-ping');
+                const cloudDot = document.getElementById('cloud-dot');
 
-            // Local cache update immediately
-            saveLocalBackup();
-
-            try {
-                const response = await fetch(CLOUD_SYNC_URL, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(stateMap)
-                });
-                
-                if (response.ok) {
-                    setCloudStatus("synced", "Cloud Synced");
-                } else {
-                    throw new Error("HTTP write error");
-                }
-            } catch (e) {
-                console.error("Cloud synchronization failed:", e);
-                setCloudStatus("offline", "Saved Locally");
-            }
-        }
-
-        function saveLocalBackup() {
-            const stateMap = {};
-            taskDatabase.forEach(t => {
-                stateMap[t.ref] = t.completedState;
-            });
-            localStorage.setItem("KMC_GANTT_PERSISTED_DB_LOCAL_V85", JSON.stringify(stateMap));
-        }
-
-        function loadFromCache() {
-            const cachedDB = localStorage.getItem("KMC_GANTT_PERSISTED_DB_LOCAL_V85");
-            if (cachedDB) {
                 try {
-                    const parsed = JSON.parse(cachedDB);
-                    taskDatabase.forEach(task => {
-                        if (parsed[task.ref] !== undefined) {
-                            task.completedState = parseInt(parsed[task.ref], 10);
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    
+                    cloudLabel.innerText = 'Connected (Live)';
+                    if (cloudPing) cloudPing.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75';
+                    if (cloudDot) cloudDot.className = 'relative inline-flex rounded-full h-2 w-2 bg-emerald-600';
+
+                    const tasksColRef = collection(db, 'artifacts', appId, 'public', 'data', 'tasks');
+
+                    const snapshot = await getDocs(tasksColRef);
+                    if (snapshot.empty) {
+                        for (const task of initialTasks) {
+                            await setDoc(doc(tasksColRef, String(task.id)), task);
                         }
+                    }
+
+                    onSnapshot(tasksColRef, (querySnapshot) => {
+                        const cloudTasks = [];
+                        querySnapshot.forEach((docSnap) => {
+                            cloudTasks.push(docSnap.data());
+                        });
+                        if (cloudTasks.length > 0) {
+                            cloudTasks.sort((a, b) => a.id - b.id);
+                            window.tasks = cloudTasks;
+                            if (typeof window.applyFilters === 'function') {
+                                window.applyFilters();
+                            }
+                        }
+                    }, (error) => {
+                        console.error("Firestore sync error:", error);
+                        cloudLabel.innerText = 'Sync Error';
                     });
-                } catch(e) {
-                    console.error("Local Storage parse failed:", e);
+
+                } catch (e) {
+                    console.error("Firebase auth/init error:", e);
+                    cloudLabel.innerText = 'Offline Mode';
                 }
-            }
+            };
+
+            initFirebase();
+        } else {
+            document.getElementById('cloud-sync-label').innerText = 'Local Mode';
         }
+    </script>
+    
+    <script>
+        // --- Core Application State & UI Logic ---
+        let isAuthenticated = false;
+        let currentUser = null;
+        let currentGroupMode = 'chapter';
+        let filterHighValueOnly = false;
+        let activeDrawerTask = null;
 
-        window.forceSyncRefresh = function() {
-            showCustomToast("Refreshing Database", "Fetching live progress statuses from Google cloud storage...");
-            loadFromCloud();
-        }
-
-        function setCloudStatus(status, text) {
-            const badge = document.getElementById("cloud-sync-badge");
-            const label = document.getElementById("cloud-sync-label");
-            const ping = document.getElementById("cloud-ping");
-            const dot = document.getElementById("cloud-dot");
-
-            if (!label) return;
-            label.innerText = text;
-
-            if (status === "synced") {
-                badge.className = "cursor-pointer bg-emerald-500/10 border border-emerald-500/30 hover:border-emerald-500 rounded-lg px-4 py-2 flex items-center gap-2.5 transition-all text-emerald-800 group";
-                ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
-                dot.className = "relative inline-flex rounded-full h-2 w-2 bg-emerald-600";
-            } else if (status === "syncing") {
-                badge.className = "cursor-pointer bg-amber-500/10 border border-amber-500/30 hover:border-amber-500 rounded-lg px-4 py-2 flex items-center gap-2.5 transition-all text-amber-800 group";
-                ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75";
-                dot.className = "relative inline-flex rounded-full h-2 w-2 bg-amber-600";
-            } else {
-                badge.className = "cursor-pointer bg-[#FAF8F2] border border-[#E3DDCF] hover:border-rose-500 rounded-lg px-4 py-2 flex items-center gap-2.5 transition-all text-rose-800 group";
-                ping.className = "hidden";
-                dot.className = "relative inline-flex rounded-full h-2 w-2 bg-rose-600";
-            }
-        }
-
-        window.onload = function() {
-            renderHeaderDays();
-            loadFromCloud();
+        const LEAD_STYLES = {
+            'Morgan': { bg: 'bg-rose-600', hover: 'hover:bg-rose-500', glow: 'glow-morgan', text: 'text-rose-700' },
+            'Shibah': { bg: 'bg-violet-600', hover: 'hover:bg-violet-500', glow: 'glow-shibah', text: 'text-violet-700' },
+            'Owen': { bg: 'bg-emerald-600', hover: 'hover:bg-emerald-500', glow: 'glow-owen', text: 'text-emerald-700' },
+            'Morgan/Shibah': { bg: 'bg-amber-500', hover: 'hover:bg-amber-400', glow: 'glow-joint', text: 'text-amber-700' }
         };
 
-        // Render days header row dynamically
-        function renderHeaderDays() {
-            const container = document.getElementById("timeline-header-days");
-            container.innerHTML = "";
-            
-            const totalDays = getDayOffset(endDateString) + 1;
-            container.style.gridTemplateColumns = `repeat(${totalDays}, minmax(40px, 1fr))`;
-
-            for (let i = 0; i < totalDays; i++) {
-                const currentDay = new Date(new Date(startDateString).getTime() + i * 24 * 60 * 60 * 1000);
-                const dayLabel = currentDay.getDate();
-                const isToday = currentDay.toISOString().split('T')[0] === simulatedTodayString;
-
-                const dayDiv = document.createElement("div");
-                dayDiv.className = `py-3 text-[10px] font-mono border-r border-[#E3DDCF] flex flex-col justify-center items-center ${isToday ? 'bg-amber-500/10 text-amber-800 font-bold' : 'text-[#6E645A]'}`;
-                dayDiv.innerHTML = `
-                    <span class="text-[9px]">Jul</span>
-                    <span class="text-xs font-bold ${isToday ? 'text-amber-800' : 'text-[#2A2421]' }">${dayLabel}</span>
-                `;
-                container.appendChild(dayDiv);
+        function simulateCloudConnect() {
+            if (typeof window.db !== 'undefined') return;
+            const label = document.getElementById('cloud-sync-label');
+            const ping = document.getElementById('cloud-ping');
+            const dot = document.getElementById('cloud-dot');
+            if (label) {
+                label.innerText = 'Connecting...';
+                setTimeout(() => {
+                    label.innerText = 'Connected';
+                    if (ping) ping.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75';
+                    if (dot) dot.className = 'relative inline-flex rounded-full h-2 w-2 bg-emerald-600';
+                }, 1000);
             }
         }
 
-        // Toggle view grouping mode
-        window.toggleGroupMode = function(mode) {
-            currentGrouping = mode;
-            document.getElementById("btn-group-chapter").className = mode === "chapter" 
-                ? "px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 bg-rose-600 text-white shadow-sm"
-                : "px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 text-slate-400 hover:text-white";
-            
-            document.getElementById("btn-group-lead").className = mode === "lead" 
-                ? "px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 bg-rose-600 text-white shadow-sm"
-                : "px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 text-slate-400 hover:text-white";
-            
-            renderGanttChart();
+        window.onload = () => {
+            simulateCloudConnect();
+            renderTimelineHeader();
+            applyFilters();
+            updateCompletionStats();
+        };
+
+        // --- Rendering Engine with Grid Alignment ---
+        function renderTimelineHeader() {
+            let html = '';
+            for (let i = 1; i <= 31; i++) {
+                const dayOfWeek = (i + 2) % 7;
+                const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+                const isToday = window.CURRENT_DATE === i;
+                
+                html += `
+                    <div class="border-r border-[#E3DDCF] flex flex-col justify-center items-center py-2 ${isWeekend ? 'bg-[#EFECE1]/50' : ''} relative">
+                        <div class="text-[9px] font-normal text-[#6E645A]">Jul</div>
+                        <div class="${isToday ? 'bg-amber-500 text-white rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-md pulse-today' : 'font-semibold mt-0.5'}">${i}</div>
+                    </div>
+                `;
+            }
+            document.getElementById('timeline-header-days').innerHTML = html;
         }
 
-        window.applyFilters = function() {
-            activeLeadFilter = document.getElementById("filter-lead").value;
-            activeMemberFilter = document.getElementById("filter-member").value;
-            renderGanttChart();
+        function generateBackgroundGridCells() {
+            let html = '';
+            for (let i = 1; i <= 31; i++) {
+                const isToday = window.CURRENT_DATE === i;
+                const dayOfWeek = (i + 2) % 7;
+                const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+                html += `
+                    <div class="border-r border-[#E3DDCF] ${isWeekend ? 'bg-[#EFECE1]/40' : ''} relative h-full">
+                        ${isToday ? '<div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[2px] bg-amber-500 z-10 pulse-today pointer-events-none"></div>' : ''}
+                    </div>
+                `;
+            }
+            return html;
         }
+
+        function renderGantt(filteredTasks) {
+            let html = '';
+            
+            const grouped = {};
+            filteredTasks.forEach(task => {
+                const key = currentGroupMode === 'chapter' ? task.chapter : task.lead;
+                if (!grouped[key]) grouped[key] = [];
+                grouped[key].push(task);
+            });
+
+            for (const [groupName, groupTasks] of Object.entries(grouped)) {
+                // Group Header Row
+                html += `
+                    <div class="border-b border-[#E3DDCF] bg-[#FAF8F2] flex">
+                        <div class="w-[320px] min-w-[320px] p-3 border-r border-[#E3DDCF] sticky left-0 bg-[#FAF8F2] z-20 flex items-center gap-2">
+                            <i class="${currentGroupMode === 'chapter' ? 'fa-solid fa-folder-open text-rose-500' : 'fa-solid fa-user-tie text-violet-500'}"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-[#2A2421]">${groupName}</span>
+                        </div>
+                        <div class="flex-1 relative grid" style="grid-template-columns: repeat(31, minmax(32px, 1fr));">
+                            ${generateBackgroundGridCells()}
+                        </div>
+                    </div>
+                `;
+
+                // Task Rows
+                groupTasks.forEach(task => {
+                    const isOverdue = task.end < window.CURRENT_DATE && task.status === 0;
+                    const rowClass = isOverdue ? 'bg-red-50/50 pulse-overdue' : 'bg-white hover:bg-[#FAF8F2]';
+                    const style = LEAD_STYLES[task.lead] || LEAD_STYLES['Morgan'];
+                    
+                    let statusIcon = '';
+                    if (task.status === 2) statusIcon = '<i class="fa-solid fa-circle-check text-emerald-600 text-sm drop-shadow-sm"></i>';
+                    else if (task.status === 1) statusIcon = '<i class="fa-solid fa-circle-half-stroke text-amber-500 text-sm drop-shadow-sm"></i>';
+                    else statusIcon = '<i class="fa-regular fa-circle text-slate-300 hover:text-rose-500 transition-colors text-sm"></i>';
+
+                    html += `
+                        <div class="border-b border-[#E3DDCF] flex transition-colors ${rowClass} relative">
+                            <!-- Left Details -->
+                            <div class="w-[320px] min-w-[320px] p-3 border-r border-[#E3DDCF] sticky left-0 bg-inherit z-20 flex items-center justify-between group">
+                                <div class="flex items-center gap-3 overflow-hidden">
+                                    <div class="cursor-pointer" onclick="handleStatusClick(event, ${task.id})" title="Toggle Status (Auth Required)">
+                                        ${statusIcon}
+                                    </div>
+                                    <div class="truncate cursor-pointer" onclick="openDrawer(${task.id})">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] font-bold mono text-slate-400 group-hover:text-rose-600 transition-colors">${task.ref}</span>
+                                            ${task.highValue ? '<i class="fa-solid fa-triangle-exclamation text-[9px] text-amber-500" title="High Priority"></i>' : ''}
+                                        </div>
+                                        <div class="text-xs font-semibold text-[#2A2421] truncate" title="${task.name}">${task.name}</div>
+                                    </div>
+                                </div>
+                                <div class="w-6 h-6 rounded-full bg-[#EFECE1] border border-[#E3DDCF] flex items-center justify-center text-[10px] font-bold ${style.text} shadow-sm shrink-0" title="Lead: ${task.lead}">
+                                    ${task.lead.charAt(0)}
+                                </div>
+                            </div>
+
+                            <!-- Right Grid & Task Bar Layer -->
+                            <div class="flex-1 relative min-h-[46px]">
+                                <!-- Layer 1: Background Grid Cells & Coherent Today Line -->
+                                <div class="absolute inset-0 grid" style="grid-template-columns: repeat(31, minmax(32px, 1fr));">
+                                    ${generateBackgroundGridCells()}
+                                </div>
+                                <!-- Layer 2: Foreground Task Bar positioned perfectly using CSS Grid columns -->
+                                <div class="absolute inset-0 grid items-center px-1 pointer-events-none" style="grid-template-columns: repeat(31, minmax(32px, 1fr));">
+                                    <div style="grid-column: ${task.start} / span ${task.end - task.start + 1};" class="pointer-events-auto">
+                                        ${renderBar(task, style)}
+                                    </div>
+                                </div>
+                                ${isOverdue ? `<div class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-red-600 bg-white px-2 py-0.5 rounded shadow-sm border border-red-200 z-20">Overdue</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            document.getElementById('gantt-rows-container').innerHTML = html;
+            updateCompletionStats();
+        }
+
+        function renderBar(task, style) {
+            const duration = task.end - task.start + 1;
+            const refShort = task.ref.replace('Ref ', '');
+            
+            let barClass = task.status === 2 ? 'bg-slate-600 hover:bg-slate-500' : `${style.bg} ${style.hover} ${style.glow}`;
+            
+            let statusContent = '';
+            if (task.status === 2) {
+                statusContent = `<i class="fa-solid fa-circle-check ml-1"></i> <span class="uppercase tracking-widest text-[8px]">Approved</span>`;
+            } else if (task.status === 1) {
+                statusContent = `<i class="fa-solid fa-gears ml-1"></i> <span class="uppercase tracking-widest text-[8px]">Draft</span>`;
+            } else {
+                statusContent = `<i class="fa-regular fa-clock ml-1 opacity-75"></i>`;
+            }
+
+            return `
+                <div class="h-7 rounded-md ${barClass} cursor-pointer transition-all duration-300 z-20 overflow-hidden flex items-center px-2 text-white shadow-sm border border-white/20 whitespace-nowrap w-full" 
+                     onclick="openDrawer(${task.id})"
+                     title="${task.name} (${task.start} - ${task.end} Jul)">
+                     <span class="text-[9px] font-bold flex items-center gap-1 truncate"><span class="shrink-0">${refShort}</span> <span class="opacity-50 font-normal">|</span> <span class="shrink-0">${duration} Days</span> ${statusContent}</span>
+                </div>
+            `;
+        }
+
+        // --- Interactive Logic & Filtering ---
+        window.toggleGroupMode = function(mode) {
+            currentGroupMode = mode;
+            if (mode === 'chapter') {
+                document.getElementById('btn-group-chapter').className = "px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 bg-rose-600 text-white shadow-sm";
+                document.getElementById('btn-group-lead').className = "px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 text-slate-400 hover:text-white";
+            } else {
+                document.getElementById('btn-group-lead').className = "px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 bg-rose-600 text-white shadow-sm";
+                document.getElementById('btn-group-chapter').className = "px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 text-slate-400 hover:text-white";
+            }
+            applyFilters();
+        };
 
         window.toggleHighValueOnly = function() {
-            highValueOnly = !highValueOnly;
-            const btn = document.getElementById("btn-highvalue");
-            if (highValueOnly) {
-                btn.className = "w-full bg-amber-500/20 border border-amber-500 text-white rounded-lg px-4 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm";
-            } else {
-                btn.className = "w-full bg-slate-800 hover:bg-slate-750 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-2";
-            }
-            renderGanttChart();
-        }
-
-        // Center timeline horizontally to start near active Date (July 9, 2026)
-        function centerTimelineOnToday() {
-            const container = document.getElementById("gantt-scroll-container");
-            const todayOffset = getDayOffset(simulatedTodayString);
-            const totalDays = getDayOffset(endDateString) + 1;
-            const singleDayWidth = (container.scrollWidth - 320) / totalDays;
+            filterHighValueOnly = !filterHighValueOnly;
+            const btn = document.getElementById('btn-highvalue');
+            const icon = document.getElementById('highvalue-icon');
+            const txt = document.getElementById('highvalue-text');
             
-            container.scrollLeft = (todayOffset * singleDayWidth) - (container.clientWidth / 3);
-        }
-
-        window.openAuthModal = function() {
-            document.getElementById("auth-modal").classList.remove("hidden");
-            document.getElementById("auth-error").classList.add("hidden");
-            document.getElementById("auth-passcode").value = "";
-        }
-
-        window.closeAuthModal = function() {
-            document.getElementById("auth-modal").classList.add("hidden");
-        }
-
-        window.attemptAuthentication = function() {
-            const chosenUser = document.getElementById("auth-user-profile").value;
-            const enteredPasscode = document.getElementById("auth-passcode").value;
-            const errorBanner = document.getElementById("auth-error");
-
-            if (enteredPasscode === "KMC2026") {
-                isAuthorized = true;
-                activeEditorName = chosenUser;
-                errorBanner.classList.add("hidden");
-                closeAuthModal();
-                updateAuthorizationUIElements();
-                showCustomToast("Security Access Unlocked", `Logged in successfully as Lead ${chosenUser}. Cloud write privileges active.`);
-                renderGanttChart();
+            if (filterHighValueOnly) {
+                btn.classList.replace('bg-slate-800', 'bg-amber-500/20');
+                btn.classList.replace('border-slate-700', 'border-amber-500');
+                icon.classList.add('animate-bounce');
+                txt.classList.replace('text-white', 'text-amber-500');
             } else {
-                errorBanner.classList.remove("hidden");
+                btn.classList.replace('bg-amber-500/20', 'bg-slate-800');
+                btn.classList.replace('border-amber-500', 'border-slate-700');
+                icon.classList.remove('animate-bounce');
+                txt.classList.replace('text-amber-500', 'text-white');
             }
-        }
+            applyFilters();
+        };
 
-        function updateAuthorizationUIElements() {
-            const badge = document.getElementById("auth-badge-trigger");
-            const label = document.getElementById("auth-label");
-            const ping = document.getElementById("auth-ping");
-            const dot = document.getElementById("auth-dot");
+        window.applyFilters = function() {
+            const leadFilter = document.getElementById('filter-lead').value;
+            const memberFilter = document.getElementById('filter-member').value;
 
-            if (isAuthorized) {
-                badge.className = "cursor-pointer bg-emerald-50 hover:bg-emerald-100 border border-emerald-500 rounded-lg px-4 py-2 flex items-center gap-3 transition-all group shadow-sm";
-                label.className = "text-xs font-bold text-emerald-800 flex items-center gap-1";
-                label.innerHTML = `<i class="fa-solid fa-lock-open text-[10px]"></i> Editor: ${activeEditorName}`;
-                ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
-                dot.className = "relative inline-flex rounded-full h-3 w-3 bg-emerald-500";
-            } else {
-                badge.className = "cursor-pointer bg-[#FAF8F2] hover:bg-[#F0EDE4] border border-amber-500/40 hover:border-amber-500 rounded-lg px-4 py-2 flex items-center gap-3 transition-all group";
-                label.className = "text-xs font-bold text-amber-700 flex items-center gap-1";
-                label.innerHTML = `<i class="fa-solid fa-lock text-[10px]"></i> View-Only Mode`;
-                ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75";
-                dot.className = "relative inline-flex rounded-full h-3 w-3 bg-amber-500";
+            const filtered = window.tasks.filter(task => {
+                const leadMatch = leadFilter === 'all' || task.lead === leadFilter;
+                const memberMatch = memberFilter === 'all' || task.member === memberFilter;
+                const highValueMatch = filterHighValueOnly ? task.highValue : true;
+                return leadMatch && memberMatch && highValueMatch;
+            });
+
+            renderGantt(filtered);
+        };
+
+        // --- Task Status & Drawer Actions (with Cloud Firestore sync) ---
+        window.handleStatusClick = async function(event, taskId) {
+            event.stopPropagation();
+            if (!isAuthenticated) {
+                showToastWarning();
+                return;
             }
-        }
-
-        function showCustomToast(headline, text) {
-            const toast = document.getElementById("toast-warning");
-            toast.querySelector("h4").innerText = headline;
-            toast.querySelector("p").innerText = text;
             
-            toast.classList.remove("hidden");
-            toast.classList.remove("translate-y-10");
-            toast.classList.add("translate-y-0");
+            const task = window.tasks.find(t => t.id === taskId);
+            if (task) {
+                task.status = (task.status + 1) % 3;
+                
+                if (typeof window.db !== 'undefined' && typeof window.appId !== 'undefined') {
+                    try {
+                        const { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                        const taskRef = doc(window.db, 'artifacts', window.appId, 'public', 'data', 'tasks', String(task.id));
+                        await updateDoc(taskRef, { status: task.status });
+                    } catch (err) {
+                        console.error("Error updating cloud status:", err);
+                    }
+                }
 
-            if (headline !== "Access Blocked (View-Only Mode)") {
-                setTimeout(() => {
-                    dismissToast();
-                }, 6000);
+                applyFilters();
+                updateCompletionStats();
+                if(activeDrawerTask === taskId) {
+                    populateDrawer(task);
+                }
             }
-        }
+        };
 
-        window.dismissToast = function() {
-            const toast = document.getElementById("toast-warning");
-            toast.classList.add("translate-y-10");
+        window.setTaskStatus = async function(status) {
+            if (!isAuthenticated) {
+                showToastWarning();
+                return;
+            }
+            if (activeDrawerTask) {
+                const task = window.tasks.find(t => t.id === activeDrawerTask);
+                if (task) {
+                    task.status = status;
+                    
+                    if (typeof window.db !== 'undefined' && typeof window.appId !== 'undefined') {
+                        try {
+                            const { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                            const taskRef = doc(window.db, 'artifacts', window.appId, 'public', 'data', 'tasks', String(task.id));
+                            await updateDoc(taskRef, { status: task.status });
+                        } catch (err) {
+                            console.error("Error updating cloud status:", err);
+                        }
+                    }
+
+                    applyFilters();
+                    updateCompletionStats();
+                    populateDrawer(task);
+                }
+            }
+        };
+
+        window.openDrawer = function(taskId) {
+            const task = window.tasks.find(t => t.id === taskId);
+            if (!task) return;
+            activeDrawerTask = taskId;
+            populateDrawer(task);
+            
+            const drawer = document.getElementById('detail-drawer');
+            drawer.classList.remove('hidden');
             setTimeout(() => {
-                toast.classList.add("hidden");
-            }, 300);
-        }
-
-        // Cycles states on click: 0 (Not Started) -> 1 (Draft Submitted) -> 2 (Approved) -> 0
-        window.cycleTaskState = function(taskRef) {
-            if (!isAuthorized) {
-                showCustomToast(
-                    "Access Blocked (View-Only Mode)", 
-                    "You are currently viewing this sheet as read-only. Only Gabriel Herniel Kitutu or assigned Team Leads can submit drafts or approve tasks."
-                );
-                return;
-            }
-
-            const task = taskDatabase.find(t => t.ref === taskRef);
-            if (task) {
-                const oldState = task.completedState !== undefined ? task.completedState : 0;
-                task.completedState = (oldState + 1) % 3;
-                
-                // Fire background cloud sync
-                syncToCloud();
-                
-                updateGlobalStats();
-                renderGanttChart();
-                
-                // Refresh detail drawer if it is focused
-                const drawer = document.getElementById("detail-drawer");
-                if (!drawer.classList.contains("hidden")) {
-                    const drawerRef = document.getElementById("drawer-ref").innerText.replace("Ref ", "");
-                    if (drawerRef === taskRef) {
-                        showTaskDetails(task);
-                    }
-                }
-                
-                // Refresh modal lists
-                const modal = document.getElementById("completion-modal");
-                if (!modal.classList.contains("hidden")) {
-                    populateModalLists();
-                }
-            }
-        }
-
-        window.setExplicitTaskState = function(taskRef, stateCode) {
-            if (!isAuthorized) {
-                showCustomToast(
-                    "Access Blocked (View-Only Mode)", 
-                    "You are currently viewing this sheet as read-only. Only Gabriel Herniel Kitutu or assigned Team Leads can modify status parameters."
-                );
-                return;
-            }
-
-            const task = taskDatabase.find(t => t.ref === taskRef);
-            if (task) {
-                task.completedState = stateCode;
-                syncToCloud();
-                updateGlobalStats();
-                renderGanttChart();
-                showTaskDetails(task);
-            }
-        }
-
-        function renderGanttChart() {
-            const rowsContainer = document.getElementById("gantt-rows-container");
-            rowsContainer.innerHTML = "";
-
-            const totalTimelineDays = getDayOffset(endDateString) + 1;
-
-            const filteredTasks = taskDatabase.filter(task => {
-                if (activeLeadFilter !== "all" && task.lead !== activeLeadFilter) return false;
-                if (activeMemberFilter !== "all" && !task.member.includes(activeMemberFilter)) return false;
-                if (highValueOnly && !task.highPriority) return false;
-                return true;
-            });
-
-            let groups = {};
-            if (currentGrouping === "chapter") {
-                filteredTasks.forEach(task => {
-                    if (!groups[task.section]) groups[task.section] = [];
-                    groups[task.section].push(task);
-                });
-            } else {
-                filteredTasks.forEach(task => {
-                    const groupKey = `Lead Officer: ${task.lead}`;
-                    if (!groups[groupKey]) groups[groupKey] = [];
-                    groups[groupKey].push(task);
-                });
-            }
-
-            Object.keys(groups).sort().forEach(groupTitle => {
-                // Section Header Row
-                const headerRow = document.createElement("div");
-                headerRow.className = "bg-[#EFECE1] px-6 py-2 border-y border-[#E3DDCF] text-[10px] uppercase tracking-wider font-extrabold text-[#6E645A] flex items-center justify-between";
-                headerRow.innerHTML = `
-                    <span>${groupTitle}</span>
-                    <span class="text-[9px] text-[#6E645A]">${groups[groupTitle].length} Work Packages</span>
-                `;
-                rowsContainer.appendChild(headerRow);
-
-                groups[groupTitle].forEach(task => {
-                    const startOffset = getDayOffset(task.start);
-                    const duration = getDayOffset(task.end) - startOffset + 1;
-
-                    const taskState = task.completedState !== undefined ? task.completedState : 0;
-                    const isOverdue = (taskState < 2) && (new Date(task.end) < new Date(simulatedTodayString));
-                    const isActive = new Date(task.start) <= new Date(simulatedTodayString) && new Date(task.end) >= new Date(simulatedTodayString);
-
-                    const rowDiv = document.createElement("div");
-                    rowDiv.id = `gantt-row-${task.ref}`;
-                    rowDiv.className = `grid grid-cols-[320px_1fr] hover:bg-[#F5F2EB]/50 transition-colors group relative border-b border-[#E3DDCF] ${isOverdue ? 'pulse-overdue bg-red-50/50' : ''}`;
-
-                    // Task detail panel (Left column)
-                    const labelDiv = document.createElement("div");
-                    labelDiv.className = "p-4 border-r border-[#E3DDCF] sticky left-0 bg-white z-10 flex flex-col justify-center min-w-[320px]";
-
-                    // Multi-State Dynamic Icon setup
-                    let stateIcon = '<i class="fa-regular fa-circle text-[#BAAF99] text-sm cursor-pointer hover:scale-110 transition-transform"></i>';
-                    if (taskState === 1) {
-                        stateIcon = '<i class="fa-solid fa-circle-half-stroke text-amber-500 text-sm cursor-pointer animate-pulse hover:scale-110 transition-transform" title="Draft Submitted & Pending Review"></i>';
-                    } else if (taskState === 2) {
-                        stateIcon = '<i class="fa-solid fa-circle-check text-emerald-600 text-sm cursor-pointer hover:scale-110 transition-transform" title="Approved & Completed"></i>';
-                    }
-
-                    labelDiv.innerHTML = `
-                        <div class="flex items-center gap-2">
-                            <span onclick="window.cycleTaskState('${task.ref}')" class="flex items-center justify-center w-6 h-6 rounded-full hover:bg-slate-100 transition-colors">
-                                ${stateIcon}
-                            </span>
-                            <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
-                            <span onclick="window.showTaskDetailsByRef('${task.ref}')" class="text-xs font-bold cursor-pointer text-[#2A2421] group-hover:text-rose-600 transition-colors truncate max-w-[190px]">${task.name}</span>
-                        </div>
-                        <div class="flex justify-between items-center mt-1.5 ml-8">
-                            <span class="text-[10px] text-[#6E645A] font-semibold flex items-center gap-1">
-                                <i class="fa-solid fa-user-circle text-rose-600/80"></i> ${task.lead}
-                                ${task.member !== 'N/A' ? `<span class="text-[#D4CDBC]">→</span> <span class="text-[#6E645A] font-medium">${task.member}</span>` : ''}
-                            </span>
-                            ${task.highPriority ? '<span class="text-[8px] text-amber-800 font-extrabold uppercase tracking-wider bg-amber-100 px-1.5 rounded border border-amber-200">Critical</span>' : ''}
-                        </div>
-                    `;
-                    rowDiv.appendChild(labelDiv);
-
-                    // Bar Timeline Grid Area (Right column)
-                    const timelineGridDiv = document.createElement("div");
-                    timelineGridDiv.className = "grid relative items-center select-none";
-                    timelineGridDiv.style.gridTemplateColumns = `repeat(${totalTimelineDays}, minmax(40px, 1fr))`;
-
-                    for (let g = 0; g < totalTimelineDays; g++) {
-                        const cell = document.createElement("div");
-                        cell.className = "h-full border-r border-dashed border-[#E3DDCF]/40";
-                        timelineGridDiv.appendChild(cell);
-                    }
-
-                    // Master interactive timeline Gantt Bar
-                    const ganttBar = document.createElement("div");
-                    
-                    // Assign glowing aesthetic depending on Lead Officer and Completion Status
-                    let barColorClasses = "from-rose-500 to-rose-600 glow-morgan text-white";
-                    if (task.lead === "Shibah") barColorClasses = "from-violet-500 to-violet-600 glow-shibah text-white";
-                    if (task.lead === "Owen") barColorClasses = "from-emerald-500 to-emerald-600 glow-owen text-white";
-                    if (task.lead === "Morgan/Shibah") barColorClasses = "from-amber-500 to-amber-600 glow-joint text-white";
-
-                    // Dynamic colors based on 3-stage lifecycle
-                    if (taskState === 1) {
-                        // Draft Submitted / Review phase -> pulsing amber / gold
-                        barColorClasses = "from-amber-400 to-amber-600 text-white animate-pulse border border-amber-500";
-                    } else if (taskState === 2) {
-                        // Approved & Validated state -> Muted elegant validated sage-green
-                        barColorClasses = "from-[#475569] to-[#64748B] text-white border border-[#334155]";
-                    }
-
-                    ganttBar.className = `absolute h-7 rounded-lg bg-gradient-to-r ${barColorClasses} flex items-center justify-between px-3 text-[10px] font-bold cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:brightness-105`;
-                    ganttBar.style.gridColumn = `${startOffset + 1} / span ${duration}`;
-
-                    // Icon setup based on completion status
-                    let statusLabel = `<span class="truncate pr-1">${task.ref} | ${duration} Days</span>`;
-                    let statusIcon = '<i class="fa-solid fa-gears animate-spin text-[9px] text-amber-200"></i>';
-                    
-                    if (taskState === 1) {
-                        statusIcon = '<span class="flex items-center gap-1"><i class="fa-solid fa-circle-half-stroke text-white text-[10px] animate-pulse"></i> <span class="text-[8px] uppercase tracking-wider text-amber-100 hidden sm:inline">Reviewing</span></span>';
-                    } else if (taskState === 2) {
-                        statusIcon = '<span class="flex items-center gap-1"><i class="fa-solid fa-circle-check text-white text-[10px]"></i> <span class="text-[8px] uppercase tracking-wider text-emerald-100 hidden sm:inline">Approved</span></span>';
-                    } else if (isOverdue) {
-                        statusIcon = '<i class="fa-solid fa-triangle-exclamation text-white text-[10px] animate-bounce"></i>';
-                    } else if (!isActive && new Date(task.start) > new Date(simulatedTodayString)) {
-                        statusIcon = '<i class="fa-regular fa-clock text-[#EFECE1] text-[9px]"></i>';
-                    }
-
-                    ganttBar.innerHTML = `
-                        ${statusLabel}
-                        <span class="flex items-center gap-1">${statusIcon}</span>
-                    `;
-
-                    ganttBar.addEventListener("click", () => showTaskDetails(task));
-                    timelineGridDiv.appendChild(ganttBar);
-
-                    // Render "Today" vertical indicator line dynamically (July 9)
-                    const todayOffset = getDayOffset(simulatedTodayString);
-                    const todayLine = document.createElement("div");
-                    todayLine.className = "absolute top-0 bottom-0 w-[2px] bg-amber-600 z-10 pointer-events-none pulse-today opacity-80";
-                    todayLine.style.left = `calc((100% / ${totalTimelineDays}) * ${todayOffset})`;
-                    timelineGridDiv.appendChild(todayLine);
-
-                    rowDiv.appendChild(timelineGridDiv);
-                    rowsContainer.appendChild(rowDiv);
-                });
-            });
-
-            if (filteredTasks.length === 0) {
-                const emptyState = document.createElement("div");
-                emptyState.className = "p-12 text-center text-[#6E645A] text-sm flex flex-col items-center justify-center gap-2";
-                emptyState.innerHTML = `
-                    <i class="fa-solid fa-magnifying-glass text-3xl text-[#BAAF99]"></i>
-                    <span>No active work packages match the designated search filter criteria.</span>
-                `;
-                rowsContainer.appendChild(emptyState);
-            }
-        }
-
-        // Display full task breakdown card
-        function showTaskDetails(task) {
-            const drawer = document.getElementById("detail-drawer");
-            drawer.classList.remove("hidden");
-
-            document.getElementById("drawer-ref").innerText = `Ref ${task.ref}`;
-            document.getElementById("drawer-name").innerText = task.name;
-            document.getElementById("drawer-lead").innerText = task.lead;
-            document.getElementById("drawer-member").innerText = task.member;
-
-            const formatStringDate = (dateStr) => {
-                const options = { month: 'short', day: 'numeric' };
-                return new Date(dateStr).toLocaleDateString('en-US', options);
-            };
-            document.getElementById("drawer-dates").innerText = `${formatStringDate(task.start)} - ${formatStringDate(task.end)}, 2026`;
-
-            const taskState = task.completedState !== undefined ? task.completedState : 0;
-            const isOverdue = (taskState < 2) && (new Date(task.end) < new Date(simulatedTodayString));
-            const isActive = new Date(task.start) <= new Date(simulatedTodayString) && new Date(task.end) >= new Date(simulatedTodayString);
+                drawer.classList.add('translate-y-0', 'opacity-100');
+                drawer.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
             
-            const badge = document.getElementById("drawer-status-badge");
-            badge.innerHTML = "";
-            
-            const div = document.createElement("div");
-            if (taskState === 2) {
-                div.className = "px-3 py-1 bg-emerald-50 border border-emerald-500 text-emerald-800 text-xs font-bold rounded-full flex items-center gap-1.5";
-                div.innerHTML = `<i class="fa-solid fa-circle-check"></i> Approved & Closed`;
-            } else if (taskState === 1) {
-                div.className = "px-3 py-1 bg-amber-50 border border-amber-500 text-amber-800 text-xs font-bold rounded-full flex items-center gap-1.5 pulse-today";
-                div.innerHTML = `<i class="fa-solid fa-circle-half-stroke animate-pulse"></i> Draft Submitted & Pending Review`;
-            } else if (isOverdue) {
-                div.className = "px-3 py-1 bg-red-50 border border-red-500 text-red-700 text-xs font-bold rounded-full flex items-center gap-1.5 pulse-today";
-                div.innerHTML = `<i class="fa-solid fa-circle-exclamation animate-bounce"></i> Overdue Target Gate`;
-            } else if (isActive) {
-                div.className = "px-3 py-1 bg-rose-50 border border-rose-500 text-rose-700 text-xs font-bold rounded-full flex items-center gap-1.5 pulse-today";
-                div.innerHTML = `<i class="fa-solid fa-bolt animate-bounce"></i> In Active Pipeline`;
-            } else {
-                div.className = "px-3 py-1 bg-[#EFECE1] border border-[#E3DDCF] text-[#6E645A] text-xs font-bold rounded-full flex items-center gap-1.5";
-                div.innerHTML = `<i class="fa-regular fa-clock"></i> Pending Draft`;
-            }
-            badge.appendChild(div);
-
-            document.getElementById("drawer-avatar-lead").innerText = task.lead.charAt(0);
-            document.getElementById("drawer-avatar-member").innerText = task.member.charAt(0);
-
-            // Update drawer explicit state controller classes to reflect selection
-            const btn0 = document.getElementById("btn-state-0");
-            const btn1 = document.getElementById("btn-state-1");
-            const btn2 = document.getElementById("btn-state-2");
-
-            btn0.setAttribute("onclick", `window.setExplicitTaskState('${task.ref}', 0)`);
-            btn1.setAttribute("onclick", `window.setExplicitTaskState('${task.ref}', 1)`);
-            btn2.setAttribute("onclick", `window.setExplicitTaskState('${task.ref}', 2)`);
-
-            // Apply style overrides based on current state
-            btn0.className = `py-1.5 text-[9px] font-bold rounded-md transition-all ${taskState === 0 ? 'bg-slate-200 text-slate-800 shadow-sm' : 'text-slate-400 hover:bg-slate-100'}`;
-            btn1.className = `py-1.5 text-[9px] font-bold rounded-md transition-all ${taskState === 1 ? 'bg-amber-100 text-amber-800 shadow-sm border border-amber-300' : 'text-amber-600 hover:bg-amber-50'}`;
-            btn2.className = `py-1.5 text-[9px] font-bold rounded-md transition-all ${taskState === 2 ? 'bg-emerald-100 text-emerald-800 shadow-sm border border-emerald-300' : 'text-emerald-600 hover:bg-emerald-50'}`;
-
             drawer.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        }
+        };
 
-        // Jump to task from modal list
-        window.showTaskDetailsByRef = function(ref) {
-            const task = taskDatabase.find(t => t.ref === ref);
-            if (task) {
-                showTaskDetails(task);
-                const row = document.getElementById(`gantt-row-${ref}`);
-                if (row) {
-                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    row.classList.add("bg-rose-100");
-                    setTimeout(() => {
-                        row.classList.remove("bg-rose-100");
-                    }, 1500);
-                }
+        function populateDrawer(task) {
+            document.getElementById('drawer-ref').innerText = task.ref;
+            document.getElementById('drawer-name').innerText = task.name;
+            document.getElementById('drawer-lead').innerText = task.lead;
+            document.getElementById('drawer-avatar-lead').innerText = task.lead.charAt(0);
+            document.getElementById('drawer-member').innerText = task.member;
+            document.getElementById('drawer-avatar-member').innerText = task.member.charAt(0);
+            document.getElementById('drawer-dates').innerText = `July ${task.start} - July ${task.end}, 2026`;
+            
+            const badgeContainer = document.getElementById('drawer-status-badge');
+            if (task.status === 2) {
+                badgeContainer.innerHTML = `<span class="px-2 py-1 bg-emerald-100 text-emerald-800 border border-emerald-200 rounded text-[10px] font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Approved Complete</span>`;
+            } else if (task.status === 1) {
+                badgeContainer.innerHTML = `<span class="px-2 py-1 bg-amber-100 text-amber-800 border border-amber-200 rounded text-[10px] font-bold"><i class="fa-solid fa-circle-half-stroke mr-1"></i> Draft Under Review</span>`;
+            } else {
+                badgeContainer.innerHTML = `<span class="px-2 py-1 bg-slate-100 text-slate-600 border border-slate-200 rounded text-[10px] font-bold"><i class="fa-regular fa-circle mr-1"></i> Pending Execution</span>`;
             }
+
+            [0,1,2].forEach(s => {
+                const btn = document.getElementById(`btn-state-${s}`);
+                btn.className = `py-1.5 text-[9px] font-bold rounded-md transition-colors ${
+                    s===0 ? 'text-slate-500 hover:bg-slate-100' : 
+                    s===1 ? 'text-amber-600 hover:bg-amber-50' : 
+                    'text-emerald-600 hover:bg-emerald-50'
+                }`;
+                btn.onclick = () => setTaskStatus(s);
+                
+                if (task.status === s) {
+                    btn.classList.add(s===0 ? 'bg-slate-200' : s===1 ? 'bg-amber-100' : 'bg-emerald-100');
+                    btn.classList.add('shadow-inner');
+                }
+            });
         }
 
         window.closeDrawer = function() {
-            document.getElementById("detail-drawer").classList.add("hidden");
+            const drawer = document.getElementById('detail-drawer');
+            drawer.classList.add('translate-y-4', 'opacity-0');
+            setTimeout(() => {
+                drawer.classList.add('hidden');
+                activeDrawerTask = null;
+            }, 300);
+        };
+
+        window.openAuthModal = function() {
+            document.getElementById('auth-modal').classList.remove('hidden');
+            document.getElementById('auth-error').classList.add('hidden');
+            document.getElementById('auth-passcode').value = '';
+        };
+        window.closeAuthModal = function() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        };
+        
+        window.attemptAuthentication = function() {
+            const code = document.getElementById('auth-passcode').value;
+            if (code.length > 2) {
+                isAuthenticated = true;
+                currentUser = document.getElementById('auth-user-profile').value;
+                
+                const badge = document.getElementById('auth-badge-trigger');
+                badge.classList.replace('border-amber-500/40', 'border-emerald-500/40');
+                badge.classList.replace('hover:border-amber-500', 'hover:border-emerald-500');
+                
+                document.getElementById('auth-ping').classList.replace('bg-amber-400', 'bg-emerald-400');
+                document.getElementById('auth-dot').classList.replace('bg-amber-500', 'bg-emerald-500');
+                
+                document.getElementById('auth-label').innerHTML = `<i class="fa-solid fa-unlock text-[10px]"></i> Editor Active (${currentUser})`;
+                document.getElementById('auth-label').classList.replace('text-amber-700', 'text-emerald-700');
+                
+                closeAuthModal();
+                dismissToast();
+            } else {
+                document.getElementById('auth-error').classList.remove('hidden');
+            }
+        };
+
+        function showToastWarning() {
+            const toast = document.getElementById('toast-warning');
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-10', 'opacity-0');
+            }, 10);
+            setTimeout(dismissToast, 5000);
         }
 
-        function updateGlobalStats() {
-            // Task completed state calculations:
-            // State 0 = 0 points, State 1 = 1 point (50%), State 2 = 2 points (100%)
-            // Progress = sum(points) / (max total points)
-            let totalPoints = 0;
-            const maxPoints = taskDatabase.length * 2;
+        window.dismissToast = function() {
+            const toast = document.getElementById('toast-warning');
+            toast.classList.add('translate-y-10', 'opacity-0');
+            setTimeout(() => toast.classList.add('hidden'), 300);
+        };
 
-            taskDatabase.forEach(t => {
-                const state = t.completedState !== undefined ? t.completedState : 0;
-                totalPoints += state; // Adds 0, 1, or 2
-            });
-
-            const percentage = Math.round((totalPoints / maxPoints) * 100);
+        window.forceSyncRefresh = function() {
+            const label = document.getElementById('cloud-sync-label');
+            const icon = document.querySelector('#cloud-sync-badge i');
             
-            const statComp = document.getElementById("stat-completion");
-            if (statComp) statComp.innerText = `${percentage}%`;
+            label.innerText = 'Syncing...';
+            icon.classList.add('animate-spin');
+            
+            setTimeout(() => {
+                label.innerText = typeof window.db !== 'undefined' ? 'Connected (Live)' : 'Synced Just Now';
+                icon.classList.remove('animate-spin');
+                setTimeout(() => {
+                    if (typeof window.db !== 'undefined') label.innerText = 'Connected (Live)';
+                }, 3000);
+            }, 800);
+        };
+
+        function updateCompletionStats() {
+            let approved = 0, drafts = 0;
+            window.tasks.forEach(t => {
+                if (t.status === 2) approved++;
+                if (t.status === 1) drafts++;
+            });
+            
+            const score = ((approved * 1) + (drafts * 0.5)) / window.tasks.length;
+            const percentage = Math.round(score * 100);
+            
+            const badge = document.getElementById('stat-completion');
+            badge.innerText = `${percentage}%`;
+            
+            if (percentage < 30) badge.className = 'text-xs font-bold mono text-rose-600';
+            else if (percentage < 70) badge.className = 'text-xs font-bold mono text-amber-600';
+            else badge.className = 'text-xs font-bold mono text-emerald-600';
         }
 
-        // Completion Modal Mechanics
         window.openCompletionModal = function() {
-            const modal = document.getElementById("completion-modal");
-            modal.classList.remove("hidden");
-            populateModalLists();
-        }
-
+            document.getElementById('completion-modal').classList.remove('hidden');
+            populateCompletionLists();
+        };
         window.closeCompletionModal = function() {
-            document.getElementById("completion-modal").classList.add("hidden");
-        }
+            document.getElementById('completion-modal').classList.add('hidden');
+        };
 
-        function populateModalLists() {
-            const approvedList = document.getElementById("modal-approved-list");
-            const reviewList = document.getElementById("modal-review-list");
-            const pendingList = document.getElementById("modal-pending-list");
+        function populateCompletionLists() {
+            const listApproved = document.getElementById('modal-approved-list');
+            const listReview = document.getElementById('modal-review-list');
+            const listPending = document.getElementById('modal-pending-list');
             
-            approvedList.innerHTML = "";
-            reviewList.innerHTML = "";
-            pendingList.innerHTML = "";
-
-            const approvedTasks = taskDatabase.filter(t => t.completedState === 2);
-            const reviewTasks = taskDatabase.filter(t => t.completedState === 1);
-            const pendingTasks = taskDatabase.filter(t => t.completedState === 0 || t.completedState === undefined);
-
-            document.getElementById("modal-approved-count").innerText = approvedTasks.length;
-            document.getElementById("modal-review-count").innerText = reviewTasks.length;
-            document.getElementById("modal-pending-count").innerText = pendingTasks.length;
-
-            approvedTasks.forEach(task => {
-                const item = document.createElement("div");
-                item.className = "flex items-center justify-between p-3 bg-white border border-emerald-100 hover:border-emerald-500 rounded-lg cursor-pointer hover:bg-[#FAF8F2] transition-all";
-                item.innerHTML = `
-                    <div class="flex items-center gap-2" onclick="closeCompletionModal(); window.showTaskDetailsByRef('${task.ref}')">
-                        <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
-                        <span class="text-xs font-bold text-[#2A2421] truncate max-w-[180px]">${task.name}</span>
+            let cApp=0, cRev=0, cPen=0;
+            let hApp='', hRev='', hPen='';
+            
+            const createCard = (t) => `
+                <div class="bg-white border border-[#E3DDCF] p-3 rounded-lg shadow-sm hover:border-rose-300 cursor-pointer transition-colors" onclick="jumpToTask(${t.id})">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[9px] font-bold mono text-slate-400">${t.ref}</span>
+                        <span class="text-[9px] font-bold text-[#6E645A] bg-[#EFECE1] px-1.5 py-0.5 rounded">${t.chapter}</span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-[9px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 border border-emerald-300 rounded font-bold uppercase">Approved</span>
-                        <button onclick="window.cycleTaskState('${task.ref}')" class="text-slate-400 hover:text-slate-800 transition-colors">
-                            <i class="fa-solid fa-rotate-left text-xs"></i>
-                        </button>
+                    <div class="text-xs font-bold text-[#2A2421] leading-tight mb-2">${t.name}</div>
+                    <div class="flex justify-between items-center text-[10px] text-[#6E645A]">
+                        <span><i class="fa-regular fa-user mr-1"></i>${t.lead}</span>
+                        <span><i class="fa-regular fa-calendar mr-1"></i>Jul ${t.end}</span>
                     </div>
-                `;
-                approvedList.appendChild(item);
+                </div>
+            `;
+
+            window.tasks.forEach(t => {
+                if(t.status === 2) { cApp++; hApp += createCard(t); }
+                else if(t.status === 1) { cRev++; hRev += createCard(t); }
+                else { cPen++; hPen += createCard(t); }
             });
 
-            reviewTasks.forEach(task => {
-                const item = document.createElement("div");
-                item.className = "flex items-center justify-between p-3 bg-white border border-amber-200 hover:border-amber-500 rounded-lg cursor-pointer hover:bg-[#FAF8F2] transition-all";
-                item.innerHTML = `
-                    <div class="flex items-center gap-2" onclick="closeCompletionModal(); window.showTaskDetailsByRef('${task.ref}')">
-                        <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
-                        <span class="text-xs font-bold text-[#2A2421] truncate max-w-[180px]">${task.name}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-[9px] text-amber-700 bg-amber-50 px-1.5 py-0.5 border border-amber-300 rounded font-bold uppercase animate-pulse">In Review</span>
-                        <button onclick="window.cycleTaskState('${task.ref}')" class="text-slate-400 hover:text-slate-850 transition-colors">
-                            <i class="fa-solid fa-arrows-spin text-xs"></i>
-                        </button>
-                    </div>
-                `;
-                reviewList.appendChild(item);
-            });
-
-            pendingTasks.forEach(task => {
-                const isOverdue = new Date(task.end) < new Date(simulatedTodayString);
-                const item = document.createElement("div");
-                item.className = `flex items-center justify-between p-3 bg-white border rounded-lg cursor-pointer hover:bg-[#FAF8F2] transition-all ${isOverdue ? 'border-red-200 hover:border-red-500' : 'border-[#E3DDCF] hover:border-rose-500'}`;
-                item.innerHTML = `
-                    <div class="flex items-center gap-2" onclick="closeCompletionModal(); window.showTaskDetailsByRef('${task.ref}')">
-                        <span class="px-1.5 py-0.5 bg-[#EFECE1] text-[9px] rounded font-bold text-[#6E645A] border border-[#E3DDCF] mono">${task.ref}</span>
-                        <span class="text-xs font-bold text-[#2A2421] truncate max-w-[180px]">${task.name}</span>
-                        ${isOverdue ? '<span class="text-[8px] bg-red-50 text-red-700 border border-red-200 px-1.5 py-0.5 rounded font-bold uppercase animate-pulse">Overdue</span>' : ''}
-                    </div>
-                    <button onclick="window.cycleTaskState('${task.ref}')" class="text-[#6E645A] hover:text-emerald-600 transition-colors">
-                        <i class="fa-solid fa-plus text-xs"></i>
-                    </button>
-                `;
-                pendingList.appendChild(item);
-            });
+            document.getElementById('modal-approved-count').innerText = cApp;
+            document.getElementById('modal-review-count').innerText = cRev;
+            document.getElementById('modal-pending-count').innerText = cPen;
+            
+            listApproved.innerHTML = hApp || '<div class="text-xs text-slate-400 italic">No tasks approved yet.</div>';
+            listReview.innerHTML = hRev || '<div class="text-xs text-slate-400 italic">No drafts pending review.</div>';
+            listPending.innerHTML = hPen || '<div class="text-xs text-slate-400 italic">All tasks submitted!</div>';
         }
 
-        // High-Fidelity Client-Side PDF Generation
+        window.jumpToTask = function(id) {
+            closeCompletionModal();
+            openDrawer(id);
+        };
+
         window.exportGanttPDF = function() {
-            const element = document.getElementById('gantt-render-root');
             const btn = document.getElementById('btn-pdf-export');
-            const originalContent = btn.innerHTML;
-
-            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Generating PDF...';
-            btn.disabled = true;
-
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Generating...';
+            
+            const element = document.getElementById('pdf-export-area');
             const opt = {
-                margin:       [0.3, 0.3, 0.3, 0.3], 
-                filename:     'KMC_Luwero_T6_Battery_Plant_Workplan.pdf',
+                margin:       [0.5, 0.5, 0.5, 0.5],
+                filename:     'KMC_T6_Battery_Plant_Workplan.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { 
-                    scale: 2, 
-                    useCORS: true,
-                    backgroundColor: '#F5F2EB', 
-                    scrollX: 0,
-                    scrollY: 0
-                },
-                jsPDF:        { unit: 'in', format: 'a3', orientation: 'landscape' } 
+                html2canvas:  { scale: 2, useCORS: true, logging: false },
+                jsPDF:        { unit: 'in', format: 'a3', orientation: 'landscape' }
             };
 
             html2pdf().set(opt).from(element).save().then(() => {
-                btn.innerHTML = originalContent;
-                btn.disabled = false;
-            }).catch(err => {
-                console.error("Landscape PDF generation failed: ", err);
-                btn.innerHTML = originalContent;
-                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Export Complete';
+                setTimeout(() => btn.innerHTML = originalText, 3000);
             });
-        }
+        };
     </script>
 </body>
 </html>
